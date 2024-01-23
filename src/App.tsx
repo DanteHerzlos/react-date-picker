@@ -13,7 +13,7 @@ const App = () => {
         justifyContent: "center",
       }}
     >
-    <DatePicker/>
+    <DatePicker onChange={console.log} locale="ru"/>
     </div>
   );
 };

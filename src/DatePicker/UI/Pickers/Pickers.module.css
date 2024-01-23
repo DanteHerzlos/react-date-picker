@@ -1,0 +1,55 @@
+.yearPicker {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 3rem;
+  overflow-y: auto;
+}
+
+.dayPicker {
+  row-gap: 2px;
+  display: grid;
+  grid-template-columns: repeat(7, 2.25rem);
+  grid-template-rows: repeat(7, 2.25rem);
+  text-align: center;
+  align-items: center;
+}
+
+.day {
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.25rem;
+  width: 2.25rem;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+.year {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  height: 2rem;
+  width: 4rem;
+  border-radius: 1rem;
+  transition: 0.2s;
+}
+
+.year:hover, .month:active, .day:hover {
+  background-color: rgba(25, 118, 210, 0.08);
+}
+
+.year:active, .month:active, .day:active {
+  background-color: rgba(25, 118, 210, 0.14);
+}
+
+
+.year._active, .month._active, .day._active{
+  color: #ffffff;
+  background-color: #1976d2;
+}
+
