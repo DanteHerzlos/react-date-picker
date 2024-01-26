@@ -5,22 +5,24 @@ import { YearPicker } from "../Pickers/YearPicker";
 import { DayPicker } from "../Pickers/DayPicker";
 import { MonthPicker } from "../Pickers/MonthPicker";
 
-enum PickerTypeEnum {
+export enum PickerTypeEnum {
   DAY = "day",
   MONTH = "month",
   YEAR = "year",
 }
 
 export function Calendar({
+  pickerMode,
   date,
   onChange,
 }: {
+  pickerMode: PickerTypeEnum;
   date: Date;
   onChange?: (date: Date) => void;
 }) {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [pickerType, setPickerType] = useState<PickerTypeEnum>(
-    PickerTypeEnum.DAY,
+    pickerMode,
   );
 
   useEffect(() => {
@@ -37,36 +39,34 @@ export function Calendar({
     const newDate = new Date(date);
     newDate.setFullYear(year);
     onChange && onChange(newDate);
-    setPickerType(PickerTypeEnum.DAY);
+    setPickerType(pickerMode);
   }
 
   function onMonthPickHandler(month: number) {
     const newDate = new Date(date);
     newDate.setMonth(month);
     onChange && onChange(newDate);
-    setPickerType(PickerTypeEnum.DAY);
+    setPickerType(pickerMode);
   }
 
   return (
     <div className={style.container}>
       <NavigatePanel
+        isMonthPicker={pickerMode !== PickerTypeEnum.YEAR}
+        isMonthNavigation={pickerMode === PickerTypeEnum.DAY}
         date={currentDate}
+        onPrevClick={() => onChangeMonthHandler(-1)}
+        onNextClick={() => onChangeMonthHandler(1)}
         onMonthClick={() =>
           setPickerType(
-            pickerType === PickerTypeEnum.DAY
-              ? PickerTypeEnum.MONTH
-              : PickerTypeEnum.DAY,
+            pickerType === pickerMode ? PickerTypeEnum.MONTH : pickerMode,
           )
         }
         onYearClick={() =>
           setPickerType(
-            pickerType === PickerTypeEnum.DAY
-              ? PickerTypeEnum.YEAR
-              : PickerTypeEnum.DAY,
+            pickerType === pickerMode ? PickerTypeEnum.YEAR : pickerMode,
           )
         }
-        onPrevClick={() => onChangeMonthHandler(-1)}
-        onNextClick={() => onChangeMonthHandler(1)}
       />
       {
         {

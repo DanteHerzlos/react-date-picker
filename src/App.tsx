@@ -1,6 +1,6 @@
-import { DatePicker } from "DatePicker/DatePicker";
+import { DatePicker, ModeTypeEnum } from "DatePicker/DatePicker";
 import "./App.css";
-
+import { PickerTypeEnum } from "DatePicker/UI/Calendar/Calendar";
 
 const App = () => {
   return (
@@ -13,7 +13,12 @@ const App = () => {
         justifyContent: "center",
       }}
     >
-    <DatePicker onChange={console.log} locale="ru"/>
+      <DatePicker
+        options={{ locale: "ru" }}
+        mode={ModeTypeEnum.INPUT}
+        pickerMode={PickerTypeEnum.DAY}
+        onChange={console.log}
+      />
     </div>
   );
 };

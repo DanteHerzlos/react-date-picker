@@ -1,8 +1,26 @@
+import { PickerTypeEnum } from "DatePicker/UI/Calendar/Calendar";
 import { toTitleCase } from "./toTitleCase";
 
 export type FormatType = "short" | "long" | "narrow";
 
 export class DateUtils {
+  static getDateMask(locale: string) {
+    const date = new Date(1970, 11, 29);
+    const localeString = date.toLocaleDateString(locale);
+    const separators = localeString.replace(/[0-9]/g, "");
+    const separator = separators.slice(0,separators.length/2);
+    const dateArr = localeString.split(separator);
+    const yearIndex = dateArr.findIndex((el) => el === "1970");
+    const monthIndex = dateArr.findIndex((el) => el === "12");
+    const dayIndex = dateArr.findIndex((el) => el === "29");
+    const positions = new Array(3);
+    positions[yearIndex] = "YYYY";
+    positions[monthIndex] = "MM";
+    positions[dayIndex] = "DD";
+    const mask = positions.join(separator)
+    return { positions, separator, mask };
+  }
+
   static getFirstDayOfMonth(date: Date) {
     return new Date(date.getFullYear(), date.getMonth(), 1);
   }
@@ -14,7 +32,7 @@ export class DateUtils {
   static getYearsInterval(start: number = 1900, end: number = 2100) {
     const years = [];
     for (let i = start; i < end; i++) years.push(i);
-    return years
+    return years;
   }
 
   static getMonthNames(
@@ -47,5 +65,18 @@ export class DateUtils {
       weekNames.push(weekName);
     }
     return weekNames;
+  }
+
+  static getDateWithRestriction(date: Date, mode: PickerTypeEnum) {
+    if (mode === PickerTypeEnum.YEAR) {
+      return new Date(date.getFullYear(), 0, 1);
+    }
+    if (mode === PickerTypeEnum.MONTH) {
+      return new Date(date.getFullYear(), date.getMonth(), 1);
+    }
+    if (mode === PickerTypeEnum.DAY) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+    return new Date(date);
   }
 }
