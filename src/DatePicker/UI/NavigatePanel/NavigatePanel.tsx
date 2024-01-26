@@ -9,11 +9,13 @@ import { DatePickerStoreContext } from "DatePicker/store/DatePickerStoreContext"
 export function NavigatePanel({
   date,
   onYearClick,
+  onMonthClick,
   onNextClick,
   onPrevClick,
 }: {
-  date: Date
-  onYearClick?: () => void
+  date: Date;
+  onYearClick?: () => void;
+  onMonthClick?: () => void;
   onNextClick?: () => void;
   onPrevClick?: () => void;
 }) {
@@ -24,14 +26,23 @@ export function NavigatePanel({
 
   return (
     <div className={style.navPanel}>
-      <div onClick={() => onYearClick && onYearClick()} className={style.yearPicker}>
-        <div>{monthName}</div>
-        <div>{date.getFullYear()}</div>
-        <ArrowDropDownIcon className={style.dropDownIcon} />
+      <div className={style.pickersBtns}>
+        <div
+          className={style.pickerBtn}
+          onClick={() => onYearClick && onYearClick()}
+        >
+          {date.getFullYear()}
+        </div>
+        <div
+          className={style.pickerBtn}
+          onClick={() => onMonthClick && onMonthClick()}
+        >
+          {monthName}
+        </div>
       </div>
-      <div className={style.monthPicker}>
+      <div className={style.monthArrows}>
         <NavigateBeforeIcon onClick={onPrevClick} />
-        <NavigateNextIcon onClick={onNextClick}/>
+        <NavigateNextIcon onClick={onNextClick} />
       </div>
     </div>
   );

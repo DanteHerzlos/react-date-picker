@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Calendar } from "./UI/Calendar/Calendar";
-import { DatePickerStoreContext } from "./store/DatePickerStoreContext";
-import { DateUtils } from "./helpers/DateUtils";
+import {
+  DatePickerStoreContext,
+  createDatePickerStore,
+} from "./store/DatePickerStoreContext";
 
 export function DatePicker({
   defaultDate,
@@ -24,16 +26,10 @@ export function DatePicker({
     setSelectedDate(new Date(date));
   }
 
-  const weekNames = useMemo(
-    () => DateUtils.getWeekNames(locale || "default"),
-    [locale],
-  );
-  const years = [];
-  for (let i = 1970; i < 2100; i++) years.push(i);
+  const store = useMemo(() => createDatePickerStore({locale}), [locale]);
+
   return (
-    <DatePickerStoreContext.Provider
-      value={{ locale: locale || "default", weekNames, years }}
-    >
+    <DatePickerStoreContext.Provider value={store}>
       <h1>{selectedDate.toLocaleDateString(locale)}</h1>
       <Calendar onChange={onChangeHandler} date={selectedDate} />
     </DatePickerStoreContext.Provider>

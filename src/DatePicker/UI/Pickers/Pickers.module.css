@@ -6,6 +6,13 @@
   overflow-y: auto;
 }
 
+.monthPicker {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 4rem;
+}
+
 .dayPicker {
   row-gap: 2px;
   display: grid;
@@ -27,6 +34,18 @@
   transition: 0.2s;
 }
 
+.month {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  height: 2.25rem;
+  padding: 0 0.5rem;
+  border-radius: 1rem;
+  transition: 0.2s;
+}
+
 .year {
   justify-self: center;
   display: flex;
@@ -39,7 +58,7 @@
   transition: 0.2s;
 }
 
-.year:hover, .month:active, .day:hover {
+.year:hover, .month:hover, .day:hover {
   background-color: rgba(25, 118, 210, 0.08);
 }
 

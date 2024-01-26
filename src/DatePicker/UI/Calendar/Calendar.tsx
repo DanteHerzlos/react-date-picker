@@ -3,6 +3,13 @@ import { NavigatePanel } from "../NavigatePanel/NavigatePanel";
 import style from "./Calendar.module.css";
 import { YearPicker } from "../Pickers/YearPicker";
 import { DayPicker } from "../Pickers/DayPicker";
+import { MonthPicker } from "../Pickers/MonthPicker";
+
+enum PickerTypeEnum {
+  DAY = "day",
+  MONTH = "month",
+  YEAR = "year",
+}
 
 export function Calendar({
   date,
@@ -12,7 +19,9 @@ export function Calendar({
   onChange?: (date: Date) => void;
 }) {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const [pickerType, setPickerType] = useState<"day" | "month" | "year">("day");
+  const [pickerType, setPickerType] = useState<PickerTypeEnum>(
+    PickerTypeEnum.DAY,
+  );
 
   useEffect(() => {
     if (date) setCurrentDate(new Date(date));
@@ -28,14 +37,34 @@ export function Calendar({
     const newDate = new Date(date);
     newDate.setFullYear(year);
     onChange && onChange(newDate);
-    setPickerType("day");
+    setPickerType(PickerTypeEnum.DAY);
+  }
+
+  function onMonthPickHandler(month: number) {
+    const newDate = new Date(date);
+    newDate.setMonth(month);
+    onChange && onChange(newDate);
+    setPickerType(PickerTypeEnum.DAY);
   }
 
   return (
     <div className={style.container}>
       <NavigatePanel
         date={currentDate}
-        onYearClick={() => setPickerType(pickerType === "day" ? "year" : "day")}
+        onMonthClick={() =>
+          setPickerType(
+            pickerType === PickerTypeEnum.DAY
+              ? PickerTypeEnum.MONTH
+              : PickerTypeEnum.DAY,
+          )
+        }
+        onYearClick={() =>
+          setPickerType(
+            pickerType === PickerTypeEnum.DAY
+              ? PickerTypeEnum.YEAR
+              : PickerTypeEnum.DAY,
+          )
+        }
         onPrevClick={() => onChangeMonthHandler(-1)}
         onNextClick={() => onChangeMonthHandler(1)}
       />
@@ -47,7 +76,12 @@ export function Calendar({
               selectedYear={date.getFullYear()}
             />
           ),
-          month: <h1>Month</h1>,
+          month: (
+            <MonthPicker
+              selectedMonth={date.getMonth()}
+              onPick={onMonthPickHandler}
+            />
+          ),
           day: (
             <DayPicker
               currentDate={currentDate}
