@@ -4,18 +4,21 @@ import {
 } from "DatePicker/store/DatePickerStoreContext";
 import { useRef } from "react";
 import style from "./Input.module.css";
+import { CalendarIcon } from "DatePicker/icons/CalendarIcon";
 
 const numericKeys = new Set(new Array(10).fill(0).map((_, i) => i.toString()));
 
 export function Input({
   value,
   options,
+  onCalendarClick,
 }: {
   value: Date;
   options?: IDatePickerStore;
+  onCalendarClick?: () => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [dateMask] = DatePickerStoreContext.useStore(store => store.dateMask);
+  const [dateMask] = DatePickerStoreContext.useStore((store) => store.dateMask);
   let dayValue = "";
   let monthValue = "";
   let yearValue = "";
@@ -38,6 +41,14 @@ export function Input({
       );
       target.setSelectionRange(newPosition.start, newPosition.end);
     }
+    if (event.key === "Backspace") {
+      if (type === "DD") dayValue = "";
+      if (type === "MM") monthValue = "";
+      if (type === "YYYY") yearValue = "";
+      target.value = dateMask.getMaskByDates(dayValue, monthValue, yearValue);
+      target.setSelectionRange(start, end);
+    }
+
     if (numericKeys.has(event.key)) {
       if (type === "DD") {
         dayValue = (dayValue + event.key).padStart(end - start, "0").slice(-2);
@@ -52,11 +63,8 @@ export function Input({
           .padStart(end - start, "0")
           .slice(-4);
       }
-      console.log(dayValue, monthValue, yearValue);
       target.value = dateMask.getMaskByDates(dayValue, monthValue, yearValue);
-
       target.setSelectionRange(start, end);
-      console.log(new Date(+yearValue, +monthValue-1, +dayValue))
     }
   }
 
@@ -66,7 +74,7 @@ export function Input({
     let type;
     for (let i = 0; i < dateMask.positions.length; i++) {
       type = dateMask.positions[i];
-      const sectionLength = dateMask.positions[i].length;
+      const sectionLength = dateMask.positions[i]?.length || 0;
       if (sectionLength >= position) {
         end = start + sectionLength;
         break;
@@ -97,6 +105,7 @@ export function Input({
         type="text"
         inputMode="numeric"
       />
+      <CalendarIcon onClick={onCalendarClick} />
     </div>
   );
 }

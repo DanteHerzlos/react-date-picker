@@ -1,6 +1,6 @@
 import { DatePicker, ModeTypeEnum } from "DatePicker/DatePicker";
 import "./App.css";
-import { PickerTypeEnum } from "DatePicker/UI/Calendar/Calendar";
+import { PickerTypeEnum } from "./DatePicker/types/PickerTypesEnum";
 
 const App = () => {
   return (

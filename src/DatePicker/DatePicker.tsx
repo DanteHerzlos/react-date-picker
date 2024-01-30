@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, PickerTypeEnum } from "./UI/Calendar/Calendar";
+import { Calendar } from "./UI/Calendar/Calendar";
 import {
   DatePickerStoreContext,
   IDatePickerStore,
@@ -7,6 +7,8 @@ import {
 } from "./store/DatePickerStoreContext";
 import { DateUtils } from "./helpers/DateUtils";
 import { Input } from "./UI/Input/Input";
+import { PickerTypeEnum } from "./types/PickerTypesEnum";
+import { createPortal } from "react-dom";
 
 export enum ModeTypeEnum {
   INPUT = "input",
@@ -38,14 +40,29 @@ export function DatePicker({
     setSelectedDate(new Date(date));
   }
 
-  const store = useMemo(() => createDatePickerStore(options || {}), [options]);
+  const store = useMemo(
+    () => createDatePickerStore(options || {}, pickerMode),
+    [options],
+  );
 
   return (
     <DatePickerStoreContext.Provider value={store}>
       {
         {
           [ModeTypeEnum.INPUT]: (
-            <Input options={options} value={selectedDate}/>
+            <>
+              <Input options={options} value={selectedDate} />
+              {createPortal(
+                <div>
+                  <Calendar
+                    pickerMode={pickerMode}
+                    onChange={onChangeHandler}
+                    date={selectedDate}
+                  />
+                </div>,
+                document.body,
+              )}
+            </>
           ),
           [ModeTypeEnum.CALENDAR]: (
             <Calendar

@@ -13,26 +13,30 @@ export class DateUtils {
     const separators = localeString.replace(/[0-9]/g, "");
     const separator = separators.slice(0, separators.length / 2);
     const dateArr = localeString.split(separator);
-    const yearIndex = dateArr.findIndex((el) => el === "1970");
-    const monthIndex = dateArr.findIndex((el) => el === "12");
-    const dayIndex = dateArr.findIndex((el) => el === "29");
     let positions = dateArr.map((d) => {
       if (d === "1970") return "YYYY";
       if (d === "12") return "MM";
       if (d === "29") return "DD";
     });
     if (pickerType === PickerTypeEnum.YEAR) {
-      positions = positions.filter(d => d !== "MM" && d !== "DD")
+      positions = positions.filter((d) => d !== "MM" && d !== "DD");
     } else if (pickerType === PickerTypeEnum.MONTH) {
-      positions = positions.filter(d => d !== "DD")
+      positions = positions.filter((d) => d !== "DD");
     }
+    const yearIndex = positions.findIndex((el) => el === "YYYY");
+    const monthIndex = positions.findIndex((el) => el === "MM");
+    const dayIndex = positions.findIndex((el) => el === "DD");
     const mask = positions.join(separator);
 
     function getMaskByDates(day?: string, month?: string, year?: string) {
-      const date = new Array(3);
-      date[dayIndex] = (day || "DD").padStart(2, "0");
-      date[monthIndex] = (month || "MM").padStart(2, "0");
+      const date = new Array(positions.length);
       date[yearIndex] = (year || "YYYY").padStart(4, "0");
+      if (dayIndex !== -1) {
+        date[dayIndex] = (day || "DD").padStart(2, "0");
+      }
+      if (monthIndex !== -1) {
+        date[monthIndex] = (month || "MM").padStart(2, "0");
+      }
       return date.join(separator);
     }
     return { positions, separator, mask, getMaskByDates };
