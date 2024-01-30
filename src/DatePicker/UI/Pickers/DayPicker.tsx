@@ -1,6 +1,5 @@
 import { DateUtils } from "../../helpers/DateUtils";
 import { DatePickerStoreContext } from "../../store/DatePickerStoreContext";
-import { useContext } from "react";
 import style from "./Pickers.module.css";
 
 export function DayPicker({
@@ -12,7 +11,7 @@ export function DayPicker({
   selectedDate: Date,
   onPick: (date: Date) => void;
 }) {
-  const { weekNames } = useContext(DatePickerStoreContext);
+  const [weekNames] = DatePickerStoreContext.useStore(store => store.weekNames);
   const firstDayOfMonth = DateUtils.getFirstDayOfMonth(currentDate);
   const lastDayOfMonth = DateUtils.getLastDayOfMonth(currentDate);
   const days: { value: number; active: boolean }[] = [];

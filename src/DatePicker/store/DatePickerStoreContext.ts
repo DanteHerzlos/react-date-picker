@@ -1,5 +1,5 @@
 import { DateUtils, FormatType } from "DatePicker/helpers/DateUtils";
-import { createContext } from "react";
+import createContextStore from "./createContextStore";
 
 export interface IDatePickerStore {
   locale?: string;
@@ -19,9 +19,10 @@ export function createDatePickerStore({
   const monthNames = DateUtils.getMonthNames(locale, monthFormat);
   const weekNames = DateUtils.getWeekNames(locale, weekFormat);
   const years = DateUtils.getYearsInterval(startYear, endYear);
-  const dateMask = DateUtils.getDateMask(locale)
-  return { locale, weekNames, monthNames, years, dateMask };
+  const dateMask = DateUtils.getDateMask(locale);
+  const selectedDate = new Date();
+  return { locale, weekNames, monthNames, years, dateMask, selectedDate };
 }
 
 export const defaultStore = createDatePickerStore({});
-export const DatePickerStoreContext = createContext(defaultStore);
+export const DatePickerStoreContext = createContextStore(defaultStore);

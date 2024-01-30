@@ -4,12 +4,7 @@ import style from "./Calendar.module.css";
 import { YearPicker } from "../Pickers/YearPicker";
 import { DayPicker } from "../Pickers/DayPicker";
 import { MonthPicker } from "../Pickers/MonthPicker";
-
-export enum PickerTypeEnum {
-  DAY = "day",
-  MONTH = "month",
-  YEAR = "year",
-}
+import { PickerTypeEnum } from "DatePicker/types/PickerTypesEnum";
 
 export function Calendar({
   pickerMode,

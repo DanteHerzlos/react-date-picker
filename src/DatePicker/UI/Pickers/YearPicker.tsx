@@ -9,7 +9,7 @@ export function YearPicker({
   selectedYear: number;
   onPick?: (year: number) => void;
 }) {
-  const { years } = useContext(DatePickerStoreContext);
+  const [ years ] = DatePickerStoreContext.useStore(store => store.years);
   const activeYearRef = useRef<HTMLDivElement | null>();
   useEffect(() => {
     if(activeYearRef) activeYearRef.current?.scrollIntoView({block: "center"})

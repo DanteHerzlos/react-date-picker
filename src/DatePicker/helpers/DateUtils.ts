@@ -1,24 +1,41 @@
-import { PickerTypeEnum } from "DatePicker/UI/Calendar/Calendar";
+import { PickerTypeEnum } from "DatePicker/types/PickerTypesEnum";
 import { toTitleCase } from "./toTitleCase";
 
 export type FormatType = "short" | "long" | "narrow";
 
 export class DateUtils {
-  static getDateMask(locale: string) {
+  static getDateMask(
+    locale: string,
+    pickerType: PickerTypeEnum = PickerTypeEnum.DAY,
+  ) {
     const date = new Date(1970, 11, 29);
     const localeString = date.toLocaleDateString(locale);
     const separators = localeString.replace(/[0-9]/g, "");
-    const separator = separators.slice(0,separators.length/2);
+    const separator = separators.slice(0, separators.length / 2);
     const dateArr = localeString.split(separator);
     const yearIndex = dateArr.findIndex((el) => el === "1970");
     const monthIndex = dateArr.findIndex((el) => el === "12");
     const dayIndex = dateArr.findIndex((el) => el === "29");
-    const positions = new Array(3);
-    positions[yearIndex] = "YYYY";
-    positions[monthIndex] = "MM";
-    positions[dayIndex] = "DD";
-    const mask = positions.join(separator)
-    return { positions, separator, mask };
+    let positions = dateArr.map((d) => {
+      if (d === "1970") return "YYYY";
+      if (d === "12") return "MM";
+      if (d === "29") return "DD";
+    });
+    if (pickerType === PickerTypeEnum.YEAR) {
+      positions = positions.filter(d => d !== "MM" && d !== "DD")
+    } else if (pickerType === PickerTypeEnum.MONTH) {
+      positions = positions.filter(d => d !== "DD")
+    }
+    const mask = positions.join(separator);
+
+    function getMaskByDates(day?: string, month?: string, year?: string) {
+      const date = new Array(3);
+      date[dayIndex] = (day || "DD").padStart(2, "0");
+      date[monthIndex] = (month || "MM").padStart(2, "0");
+      date[yearIndex] = (year || "YYYY").padStart(4, "0");
+      return date.join(separator);
+    }
+    return { positions, separator, mask, getMaskByDates };
   }
 
   static getFirstDayOfMonth(date: Date) {

@@ -9,7 +9,9 @@ export function MonthPicker({
   selectedMonth: number;
   onPick: (month: number) => void;
 }) {
-  const { monthNames } = useContext(DatePickerStoreContext);
+  const [monthNames] = DatePickerStoreContext.useStore(
+    (store) => store.monthNames,
+  );
   return (
     <div className={style.monthPicker}>
       {monthNames.map((monthName, index) => (
@@ -26,5 +28,5 @@ export function MonthPicker({
         </div>
       ))}
     </div>
-  )
+  );
 }
