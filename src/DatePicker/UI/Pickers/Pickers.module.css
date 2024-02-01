@@ -72,3 +72,8 @@
   background-color: #1976d2;
 }
 
+
+
+.day._current {
+  border: 1px solid #1976d2aa;
+}

@@ -5,19 +5,21 @@ import { YearPicker } from "../Pickers/YearPicker";
 import { DayPicker } from "../Pickers/DayPicker";
 import { MonthPicker } from "../Pickers/MonthPicker";
 import { PickerTypeEnum } from "../../../DatePicker/types/PickerTypesEnum";
+import { DatePickerStore } from "DatePicker/store/DatePickerStoreContext";
 
 export function Calendar({
-  pickerMode,
-  date,
   onChange,
+  onClose,
 }: {
-  pickerMode: PickerTypeEnum;
-  date: Date;
   onChange?: (date: Date) => void;
+  onClose?: () => void;
 }) {
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const [pickerType, setPickerType] = useState<PickerTypeEnum>(
-    pickerMode,
+  const [date, setDate] = DatePickerStore.useStore((s) => s.selectedDate);
+  const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
+  const [currentDate, setCurrentDate] = useState<Date>(date || defaultValue);
+  const [initPickerType] = DatePickerStore.useStore((s) => s.initialPickerType);
+  const [pickerType, setPickerType] = DatePickerStore.useStore(
+    (s) => s.pickerType,
   );
 
   useEffect(() => {
@@ -31,36 +33,52 @@ export function Calendar({
   }
 
   function onYearPickHandler(year: number) {
-    const newDate = new Date(date);
+    const newDate = new Date(currentDate);
     newDate.setFullYear(year);
+    if (onClose && initPickerType === PickerTypeEnum.YEAR) onClose();
     onChange && onChange(newDate);
-    setPickerType(pickerMode);
+    setDate({ selectedDate: newDate });
+    setPickerType({ pickerType: initPickerType });
   }
 
   function onMonthPickHandler(month: number) {
-    const newDate = new Date(date);
+    const newDate = new Date(currentDate);
     newDate.setMonth(month);
+    if (onClose && initPickerType === PickerTypeEnum.MONTH) onClose();
     onChange && onChange(newDate);
-    setPickerType(pickerMode);
+    setDate({ selectedDate: newDate });
+    setPickerType({ pickerType: initPickerType });
+  }
+
+  function onDayPickHandler(date: Date) {
+    onClose && onClose();
+    onChange && onChange(date);
+    setDate({ selectedDate: date });
   }
 
   return (
     <div className={style.container}>
       <NavigatePanel
-        isMonthPicker={pickerMode !== PickerTypeEnum.YEAR}
-        isMonthNavigation={pickerMode === PickerTypeEnum.DAY}
-        date={currentDate}
+        isMonthPicker={pickerType !== PickerTypeEnum.YEAR}
+        isMonthNavigation={pickerType === PickerTypeEnum.DAY}
+        date={currentDate.getTime() ? currentDate : new Date()}
         onPrevClick={() => onChangeMonthHandler(-1)}
         onNextClick={() => onChangeMonthHandler(1)}
         onMonthClick={() =>
-          setPickerType(
-            pickerType === pickerMode ? PickerTypeEnum.MONTH : pickerMode,
-          )
+          setPickerType({
+            pickerType:
+              pickerType === initPickerType
+                ? PickerTypeEnum.MONTH
+                : initPickerType,
+          })
         }
         onYearClick={() =>
-          setPickerType(
-            pickerType === pickerMode ? PickerTypeEnum.YEAR : pickerMode,
-          )
+          setPickerType({
+            pickerType:
+              pickerType === initPickerType
+                ? PickerTypeEnum.YEAR
+                : initPickerType,
+          })
         }
       />
       {
@@ -68,20 +86,20 @@ export function Calendar({
           year: (
             <YearPicker
               onPick={onYearPickHandler}
-              selectedYear={date.getFullYear()}
+              selectedYear={date.getFullYear() || new Date().getFullYear()}
             />
           ),
           month: (
             <MonthPicker
-              selectedMonth={date.getMonth()}
+              selectedMonth={date.getMonth() || new Date().getMonth()}
               onPick={onMonthPickHandler}
             />
           ),
           day: (
             <DayPicker
-              currentDate={currentDate}
+              currentDate={currentDate.getTime() ? currentDate : new Date()}
               selectedDate={date}
-              onPick={(date) => onChange && onChange(date)}
+              onPick={onDayPickHandler}
             />
           ),
         }[pickerType]

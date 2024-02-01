@@ -16,7 +16,7 @@ const App = () => {
       <DatePicker
         options={{ locale: "ru" }}
         mode={ModeTypeEnum.INPUT}
-        pickerMode={PickerTypeEnum.DAY}
+        pickerType={PickerTypeEnum.DAY}
         onChange={console.log}
       />
     </div>

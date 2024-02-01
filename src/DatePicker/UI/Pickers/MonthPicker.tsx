@@ -1,6 +1,5 @@
-import { useContext } from "react";
 import style from "./Pickers.module.css";
-import { DatePickerStoreContext } from "DatePicker/store/DatePickerStoreContext";
+import { DatePickerStore } from "DatePicker/store/DatePickerStoreContext";
 
 export function MonthPicker({
   selectedMonth,
@@ -9,9 +8,7 @@ export function MonthPicker({
   selectedMonth: number;
   onPick: (month: number) => void;
 }) {
-  const [monthNames] = DatePickerStoreContext.useStore(
-    (store) => store.monthNames,
-  );
+  const [monthNames] = DatePickerStore.useStore((s) => s.monthNames);
   return (
     <div className={style.monthPicker}>
       {monthNames.map((monthName, index) => (

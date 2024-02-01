@@ -1,27 +1,53 @@
-import {
-  DatePickerStoreContext,
-  IDatePickerStore,
-} from "DatePicker/store/DatePickerStoreContext";
-import { useRef } from "react";
+import { DatePickerStore } from "DatePicker/store/DatePickerStoreContext";
+import { useEffect, useRef, useState } from "react";
 import style from "./Input.module.css";
 import { CalendarIcon } from "DatePicker/icons/CalendarIcon";
 
 const numericKeys = new Set(new Array(10).fill(0).map((_, i) => i.toString()));
+let dayValue = "";
+let monthValue = "";
+let yearValue = "";
 
 export function Input({
-  value,
-  options,
   onCalendarClick,
+  onInvalid,
+  label,
+  customValidationMessage,
 }: {
-  value: Date;
-  options?: IDatePickerStore;
   onCalendarClick?: () => void;
+  onInvalid?: (e: React.FormEvent<HTMLInputElement>) => void;
+  label?: string;
+  customValidationMessage?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [dateMask] = DatePickerStoreContext.useStore((store) => store.dateMask);
-  let dayValue = "";
-  let monthValue = "";
-  let yearValue = "";
+  const [dateMask] = DatePickerStore.useStore((s) => s.dateMask);
+  const [selectedDate, setSelectedDate] = DatePickerStore.useStore(
+    (s) => s.selectedDate,
+  );
+  const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
+  const [invalid, setInvalid] = useState<boolean>(false);
+  const [validationMessage, setValidatiopnMessage] = useState<string>("");
+
+  function onInvalidHandler(e: React.FormEvent<HTMLInputElement>) {
+    e.preventDefault();
+    setInvalid(true);
+    if (customValidationMessage) setValidatiopnMessage(customValidationMessage);
+    else setValidatiopnMessage(e.currentTarget.validationMessage);
+    if (onInvalid) onInvalid(e);
+  }
+
+  useEffect(() => {
+    if (!isNaN(selectedDate.getTime())) {
+      dayValue = selectedDate.getDate().toString();
+      monthValue = (selectedDate.getMonth() + 1).toString();
+      yearValue = selectedDate.getFullYear().toString();
+      inputRef.current!.value = dateMask.getMaskByDates(
+        selectedDate.getDate().toString(),
+        (selectedDate.getMonth() + 1).toString(),
+        selectedDate.getFullYear().toString(),
+      );
+    }
+  }, [selectedDate]);
 
   function onKeyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
     event.preventDefault();
@@ -41,6 +67,21 @@ export function Input({
       );
       target.setSelectionRange(newPosition.start, newPosition.end);
     }
+    if (event.key === "Tab") {
+      let newPosition;
+      if (end + dateMask.separator.length > dateMask.mask.length) {
+        newPosition = getSelectionRangeByPosition(0);
+      } else {
+        newPosition = getSelectionRangeByPosition(
+          end + dateMask.separator.length,
+        );
+      }
+      target.setSelectionRange(newPosition.start, newPosition.end);
+    }
+    if (event.key === "Enter") {
+      target.blur();
+    }
+
     if (event.key === "Backspace") {
       if (type === "DD") dayValue = "";
       if (type === "MM") monthValue = "";
@@ -94,18 +135,41 @@ export function Input({
     target.setSelectionRange(start, end);
   }
 
+  function onBlurHandler() {
+    if (yearValue && monthValue && dayValue) {
+      const newDate = new Date(
+        Number(yearValue),
+        Number(monthValue) - 1,
+        Number(dayValue),
+      );
+      yearValue = newDate.getFullYear().toString();
+      monthValue = (newDate.getMonth() + 1).toString();
+      dayValue = newDate.getDate().toString();
+
+      setSelectedDate({ selectedDate: newDate });
+    }else {
+      setSelectedDate({selectedDate: new Date("")})
+    }
+  }
+
   return (
-    <div>
+    <div className={style.container}>
       <input
+        onInvalid={onInvalidHandler}
+        onBlur={onBlurHandler}
+        defaultValue={defaultValue?.toLocaleDateString() || ""}
         onKeyDown={onKeyDownHandler}
         className={style.input}
         placeholder={dateMask.mask}
         onClick={onClickHandler}
         ref={inputRef}
         type="text"
-        inputMode="numeric"
       />
-      <CalendarIcon onClick={onCalendarClick} />
+      <label className={style.label}>{"label"}</label>
+      {invalid && (
+        <span className={style.validationMessage}>{validationMessage}</span>
+      )}
+      <CalendarIcon className={style.icon} onClick={onCalendarClick} />
     </div>
   );
 }

@@ -1,14 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
-import { Calendar } from "./UI/Calendar/Calendar";
+import { useMemo} from "react";
 import {
-  DatePickerStoreContext,
+  DatePickerStore,
   IDatePickerStore,
   createDatePickerStore,
 } from "./store/DatePickerStoreContext";
-import { DateUtils } from "./helpers/DateUtils";
-import { Input } from "./UI/Input/Input";
 import { PickerTypeEnum } from "./types/PickerTypesEnum";
-import { createPortal } from "react-dom";
+import { DatePickerWithContext } from "./DatePickerWithContext";
 
 export enum ModeTypeEnum {
   INPUT = "input",
@@ -16,63 +13,28 @@ export enum ModeTypeEnum {
 }
 
 export function DatePicker({
-  pickerMode = PickerTypeEnum.DAY,
+  pickerType = PickerTypeEnum.DAY,
   mode = ModeTypeEnum.CALENDAR,
-  defaultDate,
+  defaultValue,
+  value,
   options,
   onChange,
 }: {
-  pickerMode?: PickerTypeEnum;
+  pickerType?: PickerTypeEnum;
   mode?: ModeTypeEnum;
-  defaultDate?: Date;
+  defaultValue?: Date;
+  value?: Date;
   options?: IDatePickerStore;
   onChange?: (selected: Date | Date[]) => void;
 }) {
-  const [selectedDate, setSelectedDate] = useState<Date>(
-    defaultDate || DateUtils.getDateWithRestriction(new Date(), pickerMode),
-  );
-  useEffect(() => {
-    if (defaultDate) setSelectedDate(defaultDate);
-  }, [defaultDate]);
-
-  function onChangeHandler(date: Date) {
-    onChange && onChange(date);
-    setSelectedDate(new Date(date));
-  }
-
   const store = useMemo(
-    () => createDatePickerStore(options || {}, pickerMode),
-    [options],
+    () => createDatePickerStore(options || {}, pickerType, defaultValue, value),
+    [options, pickerType, value],
   );
 
   return (
-    <DatePickerStoreContext.Provider value={store}>
-      {
-        {
-          [ModeTypeEnum.INPUT]: (
-            <>
-              <Input options={options} value={selectedDate} />
-              {createPortal(
-                <div>
-                  <Calendar
-                    pickerMode={pickerMode}
-                    onChange={onChangeHandler}
-                    date={selectedDate}
-                  />
-                </div>,
-                document.body,
-              )}
-            </>
-          ),
-          [ModeTypeEnum.CALENDAR]: (
-            <Calendar
-              pickerMode={pickerMode}
-              onChange={onChangeHandler}
-              date={selectedDate}
-            />
-          ),
-        }[mode]
-      }
-    </DatePickerStoreContext.Provider>
+    <DatePickerStore.Provider value={store}>
+      <DatePickerWithContext onChange={onChange} mode={mode} />
+    </DatePickerStore.Provider>
   );
 }

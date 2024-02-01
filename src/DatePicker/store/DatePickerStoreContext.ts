@@ -19,15 +19,35 @@ export function createDatePickerStore(
     startYear,
     endYear,
   }: IDatePickerStore,
-  pickerType = PickerTypeEnum.DAY,
+  pickerType: PickerTypeEnum = PickerTypeEnum.DAY,
+  defaultValue?: Date,
+  value?: Date,
 ) {
+  const initialPickerType = pickerType;
   const monthNames = DateUtils.getMonthNames(locale, monthFormat);
   const weekNames = DateUtils.getWeekNames(locale, weekFormat);
   const years = DateUtils.getYearsInterval(startYear, endYear);
   const dateMask = DateUtils.getDateMask(locale, pickerType);
-  const selectedDate = new Date();
-  return { locale, weekNames, monthNames, years, dateMask, selectedDate };
+  let selectedDate = new Date("");
+  if (value || defaultValue) {
+    selectedDate = DateUtils.getDateWithRestriction(
+      value || defaultValue!,
+      pickerType,
+    );
+  }
+
+  return {
+    locale,
+    weekNames,
+    monthNames,
+    years,
+    dateMask,
+    selectedDate,
+    pickerType,
+    initialPickerType,
+    defaultValue
+  };
 }
 
 export const defaultStore = createDatePickerStore({});
-export const DatePickerStoreContext = createContextStore(defaultStore);
+export const DatePickerStore = createContextStore(defaultStore);

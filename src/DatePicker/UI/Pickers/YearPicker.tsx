@@ -1,6 +1,6 @@
-import { useContext, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import style from "./Pickers.module.css";
-import { DatePickerStoreContext } from "../../store/DatePickerStoreContext";
+import { DatePickerStore } from "../../store/DatePickerStoreContext";
 
 export function YearPicker({
   selectedYear,
@@ -9,10 +9,11 @@ export function YearPicker({
   selectedYear: number;
   onPick?: (year: number) => void;
 }) {
-  const [ years ] = DatePickerStoreContext.useStore(store => store.years);
+  const [years] = DatePickerStore.useStore((s) => s.years);
   const activeYearRef = useRef<HTMLDivElement | null>();
   useEffect(() => {
-    if(activeYearRef) activeYearRef.current?.scrollIntoView({block: "center"})
+    if (activeYearRef)
+      activeYearRef.current?.scrollIntoView({ block: "center" });
   }, []);
 
   return (
