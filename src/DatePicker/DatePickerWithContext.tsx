@@ -5,22 +5,26 @@ import { DatePickerStore } from "./store/DatePickerStoreContext";
 import { useEffect } from "react";
 
 export function DatePickerWithContext({
+  label,
   mode,
   onChange,
 }: {
+  label?: string;
   mode: ModeTypeEnum;
-  onChange?: (selected: Date | Date[]) => void;
+  onChange?: (selected: Date) => void;
 }) {
-  const [selectedDate] = DatePickerStore.useStore(s => s.selectedDate)
+  const [selectedDate] = DatePickerStore.useStore((s) => s.selectedDate);
+
   useEffect(() => {
-    onChange && onChange(selectedDate)
-  },[selectedDate])
+    onChange && onChange(selectedDate);
+  }, [selectedDate.toString()]);
+
   return (
     <>
       {
         {
-          [ModeTypeEnum.INPUT]: <CalendarWithInput/>,
-          [ModeTypeEnum.CALENDAR]: <Calendar/>,
+          [ModeTypeEnum.INPUT]: <CalendarWithInput label={label} />,
+          [ModeTypeEnum.CALENDAR]: <Calendar />,
         }[mode]
       }
     </>

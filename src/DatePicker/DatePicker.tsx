@@ -15,17 +15,19 @@ export enum ModeTypeEnum {
 export function DatePicker({
   pickerType = PickerTypeEnum.DAY,
   mode = ModeTypeEnum.CALENDAR,
+  label,
   defaultValue,
   value,
   options,
   onChange,
 }: {
+  label?: string
   pickerType?: PickerTypeEnum;
   mode?: ModeTypeEnum;
   defaultValue?: Date;
   value?: Date;
   options?: IDatePickerStore;
-  onChange?: (selected: Date | Date[]) => void;
+  onChange?: (selected: Date) => void;
 }) {
   const store = useMemo(
     () => createDatePickerStore(options || {}, pickerType, defaultValue, value),
@@ -34,7 +36,7 @@ export function DatePicker({
 
   return (
     <DatePickerStore.Provider value={store}>
-      <DatePickerWithContext onChange={onChange} mode={mode} />
+      <DatePickerWithContext label={label} onChange={onChange} mode={mode} />
     </DatePickerStore.Provider>
   );
 }

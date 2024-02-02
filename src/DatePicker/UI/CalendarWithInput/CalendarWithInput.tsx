@@ -5,8 +5,10 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 
 export function CalendarWithInput({
+  label,
   onChange,
 }: {
+  label?: string;
   onChange?: (selected: Date | Date[]) => void;
 }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
@@ -14,7 +16,10 @@ export function CalendarWithInput({
   return (
     <>
       <div className={style.container}>
-        <Input onCalendarClick={() => setIsCalendarOpen((prev) => !prev)} />
+        <Input
+          label={label}
+          onCalendarClick={() => setIsCalendarOpen((prev) => !prev)}
+        />
         {isCalendarOpen && (
           <div className={style.calendar}>
             <Calendar

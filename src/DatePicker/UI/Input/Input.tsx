@@ -2,11 +2,10 @@ import { DatePickerStore } from "DatePicker/store/DatePickerStoreContext";
 import { useEffect, useRef, useState } from "react";
 import style from "./Input.module.css";
 import { CalendarIcon } from "DatePicker/icons/CalendarIcon";
+import { DateValues } from "DatePicker/helpers/DateValues";
 
 const numericKeys = new Set(new Array(10).fill(0).map((_, i) => i.toString()));
-let dayValue = "";
-let monthValue = "";
-let yearValue = "";
+const dateValues = new DateValues();
 
 export function Input({
   onCalendarClick,
@@ -25,6 +24,7 @@ export function Input({
     (s) => s.selectedDate,
   );
   const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
+  const [pickerType] = DatePickerStore.useStore((s) => s.pickerType);
   const [invalid, setInvalid] = useState<boolean>(false);
   const [validationMessage, setValidatiopnMessage] = useState<string>("");
 
@@ -37,14 +37,14 @@ export function Input({
   }
 
   useEffect(() => {
+    dateValues.resetValuesByType(pickerType);
+  }, [pickerType]);
+
+  useEffect(() => {
     if (!isNaN(selectedDate.getTime())) {
-      dayValue = selectedDate.getDate().toString();
-      monthValue = (selectedDate.getMonth() + 1).toString();
-      yearValue = selectedDate.getFullYear().toString();
+      dateValues.setValuesByDate(selectedDate);
       inputRef.current!.value = dateMask.getMaskByDates(
-        selectedDate.getDate().toString(),
-        (selectedDate.getMonth() + 1).toString(),
-        selectedDate.getFullYear().toString(),
+        dateValues.getStringValues(),
       );
     }
   }, [selectedDate]);
@@ -83,28 +83,14 @@ export function Input({
     }
 
     if (event.key === "Backspace") {
-      if (type === "DD") dayValue = "";
-      if (type === "MM") monthValue = "";
-      if (type === "YYYY") yearValue = "";
-      target.value = dateMask.getMaskByDates(dayValue, monthValue, yearValue);
+      dateValues.clear(type);
+      target.value = dateMask.getMaskByDates(dateValues.getStringValues());
       target.setSelectionRange(start, end);
     }
 
     if (numericKeys.has(event.key)) {
-      if (type === "DD") {
-        dayValue = (dayValue + event.key).padStart(end - start, "0").slice(-2);
-      }
-      if (type === "MM") {
-        monthValue = (monthValue + event.key)
-          .padStart(end - start, "0")
-          .slice(-2);
-      }
-      if (type === "YYYY") {
-        yearValue = (yearValue + event.key)
-          .padStart(end - start, "0")
-          .slice(-4);
-      }
-      target.value = dateMask.getMaskByDates(dayValue, monthValue, yearValue);
+      dateValues.appendDigitToValueByType(type, event.key);
+      target.value = dateMask.getMaskByDates(dateValues.getStringValues());
       target.setSelectionRange(start, end);
     }
   }
@@ -114,7 +100,7 @@ export function Input({
     let end = 0;
     let type;
     for (let i = 0; i < dateMask.positions.length; i++) {
-      type = dateMask.positions[i];
+      type = dateMask.types[i];
       const sectionLength = dateMask.positions[i]?.length || 0;
       if (sectionLength >= position) {
         end = start + sectionLength;
@@ -124,7 +110,7 @@ export function Input({
         position -= sectionLength + dateMask.separator.length;
       }
     }
-    return { start, end, type };
+    return { start, end, type: type! };
   }
 
   function onClickHandler(event: React.FormEvent<HTMLInputElement>) {
@@ -136,20 +122,9 @@ export function Input({
   }
 
   function onBlurHandler() {
-    if (yearValue && monthValue && dayValue) {
-      const newDate = new Date(
-        Number(yearValue),
-        Number(monthValue) - 1,
-        Number(dayValue),
-      );
-      yearValue = newDate.getFullYear().toString();
-      monthValue = (newDate.getMonth() + 1).toString();
-      dayValue = newDate.getDate().toString();
-
-      setSelectedDate({ selectedDate: newDate });
-    }else {
-      setSelectedDate({selectedDate: new Date("")})
-    }
+    setSelectedDate({
+      selectedDate: dateValues.isAllSet() ? dateValues.getDate() : new Date(""),
+    });
   }
 
   return (
@@ -165,7 +140,7 @@ export function Input({
         ref={inputRef}
         type="text"
       />
-      <label className={style.label}>{"label"}</label>
+      <label className={style.label}>{label}</label>
       {invalid && (
         <span className={style.validationMessage}>{validationMessage}</span>
       )}

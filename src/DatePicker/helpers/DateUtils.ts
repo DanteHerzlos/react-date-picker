@@ -1,5 +1,6 @@
 import { PickerTypeEnum } from "DatePicker/types/PickerTypesEnum";
 import { toTitleCase } from "./toTitleCase";
+import { DateValuesType } from "./DateValues";
 
 export type FormatType = "short" | "long" | "narrow";
 
@@ -18,6 +19,12 @@ export class DateUtils {
       if (d === "12") return "MM";
       if (d === "29") return "DD";
     });
+    let types: DateValuesType[] = dateArr.map((d) => {
+      if (d === "1970") return "year";
+      if (d === "12") return "month";
+      if (d === "29") return "day";
+      return "day"
+    });
     if (pickerType === PickerTypeEnum.YEAR) {
       positions = positions.filter((d) => d !== "MM" && d !== "DD");
     } else if (pickerType === PickerTypeEnum.MONTH) {
@@ -28,18 +35,26 @@ export class DateUtils {
     const dayIndex = positions.findIndex((el) => el === "DD");
     const mask = positions.join(separator);
 
-    function getMaskByDates(day?: string, month?: string, year?: string) {
+    function getMaskByDates({
+      dayValue,
+      monthValue,
+      yearValue,
+    }: {
+      dayValue?: string;
+      monthValue?: string;
+      yearValue?: string;
+    }) {
       const date = new Array(positions.length);
-      date[yearIndex] = (year || "YYYY").padStart(4, "0");
+      date[yearIndex] = (yearValue || "YYYY").padStart(4, "0");
       if (dayIndex !== -1) {
-        date[dayIndex] = (day || "DD").padStart(2, "0");
+        date[dayIndex] = (dayValue || "DD").padStart(2, "0");
       }
       if (monthIndex !== -1) {
-        date[monthIndex] = (month || "MM").padStart(2, "0");
+        date[monthIndex] = (monthValue || "MM").padStart(2, "0");
       }
       return date.join(separator);
     }
-    return { positions, separator, mask, getMaskByDates };
+    return { types, positions, separator, mask, getMaskByDates };
   }
 
   static getFirstDayOfMonth(date: Date) {
