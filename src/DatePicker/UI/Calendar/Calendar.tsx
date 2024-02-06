@@ -30,7 +30,11 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
     const newDate = new Date(currentDate);
     newDate.setFullYear(year);
     if (onClose && initPickerType === PickerTypeEnum.YEAR) onClose();
-    setDate({ selectedDate: newDate });
+    if (initPickerType === PickerTypeEnum.YEAR) {
+      setDate({ selectedDate: newDate });
+    } else {
+      setCurrentDate(newDate);
+    }
     setPickerType({ pickerType: initPickerType });
   }
 
@@ -38,7 +42,11 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
     const newDate = new Date(currentDate);
     newDate.setMonth(month);
     if (onClose && initPickerType === PickerTypeEnum.MONTH) onClose();
-    setDate({ selectedDate: newDate });
+    if (initPickerType === PickerTypeEnum.MONTH) {
+      setDate({ selectedDate: newDate });
+    } else {
+      setCurrentDate(newDate);
+    }
     setPickerType({ pickerType: initPickerType });
   }
 
@@ -82,7 +90,8 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
           ),
           month: (
             <MonthPicker
-              selectedMonth={date.getMonth() || new Date().getMonth()}
+              currentDate={currentDate.getTime() ? currentDate : new Date()}
+              selectedDate={date}
               onPick={onMonthPickHandler}
             />
           ),

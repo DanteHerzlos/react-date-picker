@@ -83,7 +83,8 @@ export function RangeCalendar({ onClose }: { onClose?: () => void }) {
           ),
           month: (
             <MonthPicker
-              selectedMonth={date.getMonth() || new Date().getMonth()}
+              currentDate={currentDate.getTime() ? currentDate : new Date()}
+              selectedDate={date}
               onPick={onMonthPickHandler}
             />
           ),

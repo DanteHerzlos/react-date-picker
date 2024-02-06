@@ -1,11 +1,13 @@
 import style from "./Pickers.module.css";
-import { DatePickerStore } from "DatePicker/store/DatePickerStoreContext";
+import { DatePickerStore } from "../../store/DatePickerStoreContext";
 
 export function MonthPicker({
-  selectedMonth,
+  currentDate,
+  selectedDate,
   onPick,
 }: {
-  selectedMonth: number;
+  currentDate: Date;
+  selectedDate: Date;
   onPick: (month: number) => void;
 }) {
   const [monthNames] = DatePickerStore.useStore((s) => s.monthNames);
@@ -14,7 +16,8 @@ export function MonthPicker({
       {monthNames.map((monthName, index) => (
         <div
           className={
-            index === selectedMonth
+            index === selectedDate.getMonth() &&
+            currentDate.getFullYear() === selectedDate.getFullYear()
               ? [style.month, style._active].join(" ")
               : style.month
           }

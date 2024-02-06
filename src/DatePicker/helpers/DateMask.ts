@@ -1,4 +1,4 @@
-import { PickerTypeEnum } from "DatePicker/types/PickerTypesEnum";
+import { PickerTypeEnum } from "../types/PickerTypesEnum";
 import { DateValuesType } from "./DateValues";
 
 type PositionType = "YYYY" | "MM" | "DD" | "NN" 

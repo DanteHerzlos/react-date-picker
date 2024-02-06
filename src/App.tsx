@@ -5,6 +5,7 @@ import { useState } from "react";
 
 const App = () => {
   const [date, setDate] = useState(new Date());
+  console.log(date);
   return (
     <div
       style={{
@@ -18,9 +19,13 @@ const App = () => {
       <div style={{ width: "200px" }}>
         <DatePicker
           pickerType={PickerTypeEnum.DAY}
-          options={{ locale: "ru" }}
-          mode={ModeTypeEnum.INPUT}
+          options={{
+            locale: "ru",
+            disabledDates: [[new Date(1900, 0, 1), new Date(2000, 0, 1)]],
+          }}
+          mode={ModeTypeEnum.CALENDAR}
           onChange={setDate}
+          // onChange={console.log}
           label="my label"
           value={date}
         />

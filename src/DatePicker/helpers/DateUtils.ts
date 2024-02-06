@@ -1,4 +1,4 @@
-import { PickerTypeEnum } from "DatePicker/types/PickerTypesEnum";
+import { PickerTypeEnum } from "../types/PickerTypesEnum";
 import { toTitleCase } from "./toTitleCase";
 import { DateMask } from "./DateMask";
 

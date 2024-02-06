@@ -2,7 +2,7 @@ import { NavigateBeforeIcon } from "../../icons/NavigateBeforeIcon";
 import { NavigateNextIcon } from "../../icons/NavigateNextIcon";
 import style from "./NavigatePanel.module.css";
 import { toTitleCase } from "../../helpers/toTitleCase";
-import { DatePickerStore } from "DatePicker/store/DatePickerStoreContext";
+import { DatePickerStore } from "../../store/DatePickerStoreContext";
 
 export function NavigatePanel({
   isMonthPicker,
