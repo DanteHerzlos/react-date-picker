@@ -1,6 +1,6 @@
 import { PickerTypeEnum } from "DatePicker/types/PickerTypesEnum";
 import { toTitleCase } from "./toTitleCase";
-import { DateValuesType } from "./DateValues";
+import { DateMask } from "./DateMask";
 
 export type FormatType = "short" | "long" | "narrow";
 
@@ -9,52 +9,7 @@ export class DateUtils {
     locale: string,
     pickerType: PickerTypeEnum = PickerTypeEnum.DAY,
   ) {
-    const date = new Date(1970, 11, 29);
-    const localeString = date.toLocaleDateString(locale);
-    const separators = localeString.replace(/[0-9]/g, "");
-    const separator = separators.slice(0, separators.length / 2);
-    const dateArr = localeString.split(separator);
-    let positions = dateArr.map((d) => {
-      if (d === "1970") return "YYYY";
-      if (d === "12") return "MM";
-      if (d === "29") return "DD";
-    });
-    let types: DateValuesType[] = dateArr.map((d) => {
-      if (d === "1970") return "year";
-      if (d === "12") return "month";
-      if (d === "29") return "day";
-      return "day"
-    });
-    if (pickerType === PickerTypeEnum.YEAR) {
-      positions = positions.filter((d) => d !== "MM" && d !== "DD");
-    } else if (pickerType === PickerTypeEnum.MONTH) {
-      positions = positions.filter((d) => d !== "DD");
-    }
-    const yearIndex = positions.findIndex((el) => el === "YYYY");
-    const monthIndex = positions.findIndex((el) => el === "MM");
-    const dayIndex = positions.findIndex((el) => el === "DD");
-    const mask = positions.join(separator);
-
-    function getMaskByDates({
-      dayValue,
-      monthValue,
-      yearValue,
-    }: {
-      dayValue?: string;
-      monthValue?: string;
-      yearValue?: string;
-    }) {
-      const date = new Array(positions.length);
-      date[yearIndex] = (yearValue || "YYYY").padStart(4, "0");
-      if (dayIndex !== -1) {
-        date[dayIndex] = (dayValue || "DD").padStart(2, "0");
-      }
-      if (monthIndex !== -1) {
-        date[monthIndex] = (monthValue || "MM").padStart(2, "0");
-      }
-      return date.join(separator);
-    }
-    return { types, positions, separator, mask, getMaskByDates };
+    return new DateMask(locale, pickerType);
   }
 
   static getFirstDayOfMonth(date: Date) {

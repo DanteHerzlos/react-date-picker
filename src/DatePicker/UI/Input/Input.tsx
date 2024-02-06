@@ -19,22 +19,16 @@ export function Input({
   customValidationMessage?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [dateInputModel] = DatePickerStore.useStore((s) => s.dateInputModel);
+  dateInputModel.setElement(inputRef.current);
   const [dateMask] = DatePickerStore.useStore((s) => s.dateMask);
-  const [selectedDate, setSelectedDate] = DatePickerStore.useStore(
-    (s) => s.selectedDate,
-  );
   const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
   const [pickerType] = DatePickerStore.useStore((s) => s.pickerType);
   const [invalid, setInvalid] = useState<boolean>(false);
   const [validationMessage, setValidatiopnMessage] = useState<string>("");
-
-  function onInvalidHandler(e: React.FormEvent<HTMLInputElement>) {
-    e.preventDefault();
-    setInvalid(true);
-    if (customValidationMessage) setValidatiopnMessage(customValidationMessage);
-    else setValidatiopnMessage(e.currentTarget.validationMessage);
-    if (onInvalid) onInvalid(e);
-  }
+  const [selectedDate, setSelectedDate] = DatePickerStore.useStore(
+    (s) => s.selectedDate,
+  );
 
   useEffect(() => {
     dateValues.resetValuesByType(pickerType);
@@ -46,79 +40,48 @@ export function Input({
       inputRef.current!.value = dateMask.getMaskByDates(
         dateValues.getStringValues(),
       );
+      setInvalid(false);
+    } else {
+      setInvalid(true);
     }
-  }, [selectedDate]);
+  }, [selectedDate.toString()]);
 
   function onKeyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
     event.preventDefault();
     const target = event.currentTarget;
     const position = target.selectionStart!;
-    const { start, end, type } = getSelectionRangeByPosition(position);
+    const { start, end, type } = dateInputModel.getSelectionRangeByPosition(position);
     target.setSelectionRange(start, end);
-    if (event.key === "ArrowLeft") {
-      const newPosition = getSelectionRangeByPosition(
-        start - dateMask.separator.length,
-      );
-      target.setSelectionRange(newPosition.start, newPosition.end);
-    }
-    if (event.key === "ArrowRight") {
-      const newPosition = getSelectionRangeByPosition(
-        Math.min(end + dateMask.separator.length, dateMask.mask.length - 1),
-      );
-      target.setSelectionRange(newPosition.start, newPosition.end);
-    }
-    if (event.key === "Tab") {
-      let newPosition;
-      if (end + dateMask.separator.length > dateMask.mask.length) {
-        newPosition = getSelectionRangeByPosition(0);
-      } else {
-        newPosition = getSelectionRangeByPosition(
-          end + dateMask.separator.length,
-        );
-      }
-      target.setSelectionRange(newPosition.start, newPosition.end);
-    }
-    if (event.key === "Enter") {
-      target.blur();
-    }
 
+    if (event.key === "ArrowLeft") dateInputModel.setPrevRange();
+    if (event.key === "ArrowRight") dateInputModel.setNextRange();
+    if (event.key === "Tab") dateInputModel.setCircleNextRange();
+    if (event.key === "Enter") target.blur();
     if (event.key === "Backspace") {
       dateValues.clear(type);
-      target.value = dateMask.getMaskByDates(dateValues.getStringValues());
+      dateInputModel.setValueByDateValue(dateValues);
       target.setSelectionRange(start, end);
     }
 
     if (numericKeys.has(event.key)) {
-      dateValues.appendDigitToValueByType(type, event.key);
-      target.value = dateMask.getMaskByDates(dateValues.getStringValues());
+      type && dateValues.appendDigitToValueByType(type, event.key);
+      dateInputModel.setValueByDateValue(dateValues);
       target.setSelectionRange(start, end);
     }
-  }
-
-  function getSelectionRangeByPosition(position: number) {
-    let start = 0;
-    let end = 0;
-    let type;
-    for (let i = 0; i < dateMask.positions.length; i++) {
-      type = dateMask.types[i];
-      const sectionLength = dateMask.positions[i]?.length || 0;
-      if (sectionLength >= position) {
-        end = start + sectionLength;
-        break;
-      } else {
-        start += sectionLength + dateMask.separator.length;
-        position -= sectionLength + dateMask.separator.length;
-      }
-    }
-    return { start, end, type: type! };
   }
 
   function onClickHandler(event: React.FormEvent<HTMLInputElement>) {
     const target = event.currentTarget;
     if (!target.value) target.value = dateMask.mask;
-    const position = target.selectionStart!;
-    const { start, end } = getSelectionRangeByPosition(position);
-    target.setSelectionRange(start, end);
+    dateInputModel.setCurrentRange();
+  }
+
+  function onInvalidHandler(e: React.FormEvent<HTMLInputElement>) {
+    e.preventDefault();
+    setInvalid(true);
+    if (customValidationMessage) setValidatiopnMessage(customValidationMessage);
+    else setValidatiopnMessage(e.currentTarget.validationMessage);
+    if (onInvalid) onInvalid(e);
   }
 
   function onBlurHandler() {
@@ -134,7 +97,9 @@ export function Input({
         onBlur={onBlurHandler}
         defaultValue={defaultValue?.toLocaleDateString() || ""}
         onKeyDown={onKeyDownHandler}
-        className={style.input}
+        className={
+          invalid ? [style.input, style._invalid].join(" ") : style.input
+        }
         placeholder={dateMask.mask}
         onClick={onClickHandler}
         ref={inputRef}

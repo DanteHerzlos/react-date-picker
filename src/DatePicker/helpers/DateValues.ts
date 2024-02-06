@@ -1,8 +1,4 @@
-// export enum DateValuesType {
-//   DAY = "day",
-//   MONTH = "month",
-//   YEAR = "year",
-// }
+import { InvalidDate } from "./InvalidDate";
 
 export type DateValuesType = "day" | "month" | "year";
 
@@ -11,16 +7,23 @@ class DateValue {
   private size: number;
   private defaultValue: number;
   private emptyValue: number;
+  private valueOffset: number;
   constructor(
     size: number,
     defaultValue: number,
     value?: number,
-    emptyValue?: number,
+    emptyValue: number = -1,
+    valueOffset: number = 0,
   ) {
     this.size = size;
     this.defaultValue = defaultValue;
-    this.emptyValue = emptyValue || -1;
+    this.emptyValue = emptyValue;
     this.value = value || this.emptyValue;
+    this.valueOffset = valueOffset;
+  }
+
+  isEmpty() {
+    return this.value === this.emptyValue;
   }
 
   setDefault() {
@@ -33,20 +36,24 @@ class DateValue {
 
   toString() {
     if (this.value === this.emptyValue) return "";
-    return this.value.toString().padStart(this.size, "0").slice(-this.size);
+    return (this.value + this.valueOffset)
+      .toString()
+      .padStart(this.size, "0")
+      .slice(-this.size);
   }
 
   setValueFromString(str: string) {
-    this.value = Number(str.padStart(this.size, "0").slice(-this.size));
+    this.value =
+      Number(str.padStart(this.size, "0").slice(-this.size)) - this.valueOffset;
     return this.value;
   }
 }
 
 export class DateValues {
-  valueTypes: { [key in DateValuesType]: DateValue };
+  private valueTypes: { [key in DateValuesType]: DateValue };
   constructor(yearValue?: number, monthValue?: number, dayValue?: number) {
     this.dayValue = new DateValue(2, 1, dayValue);
-    this.monthValue = new DateValue(2, 0, monthValue);
+    this.monthValue = new DateValue(2, 0, monthValue, -1, 1);
     this.yearValue = new DateValue(4, 1900, yearValue);
     this.valueTypes = {
       day: this.dayValue,
@@ -82,6 +89,7 @@ export class DateValues {
   }
 
   getDate() {
+    if (this.isOneEmpty()) return new InvalidDate();
     return new Date(
       this.yearValue.value,
       this.monthValue.value,
@@ -109,11 +117,19 @@ export class DateValues {
 
   clear(type?: DateValuesType) {
     if (!type) {
-      this.dayValue.clear();
-      this.monthValue.clear();
-      this.yearValue.clear();
+      for (const value of Object.values(this.valueTypes)) {
+        value.clear();
+      }
     } else {
       this.valueTypes[type].clear();
     }
+  }
+
+  isOneEmpty() {
+    let isEmpty = false;
+    for (const value of Object.values(this.valueTypes)) {
+      isEmpty ||= value.isEmpty();
+    }
+    return isEmpty;
   }
 }

@@ -1,6 +1,7 @@
 import { DateUtils, FormatType } from "DatePicker/helpers/DateUtils";
 import createContextStore from "./createContextStore";
 import { PickerTypeEnum } from "DatePicker/types/PickerTypesEnum";
+import { DateInputModel } from "DatePicker/helpers/InputUtils";
 
 export interface IDatePickerStore {
   locale?: string;
@@ -28,6 +29,7 @@ export function createDatePickerStore(
   const weekNames = DateUtils.getWeekNames(locale, weekFormat);
   const years = DateUtils.getYearsInterval(startYear, endYear);
   const dateMask = DateUtils.getDateMask(locale, pickerType);
+  const dateInputModel = new DateInputModel(dateMask);
   let selectedDate = new Date("");
   if (value || defaultValue) {
     selectedDate = DateUtils.getDateWithRestriction(
@@ -45,7 +47,8 @@ export function createDatePickerStore(
     selectedDate,
     pickerType,
     initialPickerType,
-    defaultValue
+    defaultValue,
+    dateInputModel,
   };
 }
 
