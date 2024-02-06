@@ -1,7 +1,7 @@
-import { DateUtils, FormatType } from "DatePicker/helpers/DateUtils";
+import { DateUtils, FormatType } from "../helpers/DateUtils";
 import createContextStore from "./createContextStore";
-import { PickerTypeEnum } from "DatePicker/types/PickerTypesEnum";
-import { DateInputModel } from "DatePicker/helpers/InputUtils";
+import { PickerTypeEnum } from "../types/PickerTypesEnum";
+import { DateInputModel } from "../helpers/InputUtils";
 
 export interface IDatePickerStore {
   locale?: string;
@@ -10,6 +10,7 @@ export interface IDatePickerStore {
   startYear?: number;
   endYear?: number;
   pickerType?: PickerTypeEnum;
+  disabledDates?: [Date, Date][];
 }
 
 export function createDatePickerStore(
@@ -19,6 +20,7 @@ export function createDatePickerStore(
     weekFormat,
     startYear,
     endYear,
+    disabledDates = [],
   }: IDatePickerStore,
   pickerType: PickerTypeEnum = PickerTypeEnum.DAY,
   defaultValue?: Date,
@@ -49,6 +51,7 @@ export function createDatePickerStore(
     initialPickerType,
     defaultValue,
     dateInputModel,
+    disabledDates
   };
 }
 

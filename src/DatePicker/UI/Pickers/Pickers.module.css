@@ -72,7 +72,30 @@
   background-color: #1976d2;
 }
 
+.year._disabled, .month._disabled, .day._disabled{
+  color: #999999;
+  pointer-events: none;
+}
 
+.year._middleRange, .month._middleRange, .day._middleRange{
+  color: #ffffff;
+  background-color: #1976d2;
+  border-radius: 0;
+}
+
+.year._startRange, .month._startRange, .day._startRange{
+  color: #ffffff;
+  background-color: #1976d2;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.year._endRange, .month._endRange, .day._endRange{
+  color: #ffffff;
+  background-color: #1976d2;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
 
 .day._current {
   border: 1px solid #1976d2aa;

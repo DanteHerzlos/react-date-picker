@@ -7,7 +7,8 @@ import { MonthPicker } from "../Pickers/MonthPicker";
 import { PickerTypeEnum } from "../../../DatePicker/types/PickerTypesEnum";
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
 
-export function Calendar({ onClose }: { onClose?: () => void }) {
+export function RangeCalendar({ onClose }: { onClose?: () => void }) {
+  const [dateSelectionIdx, setDateSelectionIdx] = useState<number>(0);
   const [date, setDate] = DatePickerStore.useStore((s) => s.selectedDate);
   const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
   const [currentDate, setCurrentDate] = useState<Date>(date || defaultValue);

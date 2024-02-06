@@ -4,13 +4,7 @@ import style from "./CalendarWithInput.module.css";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 
-export function CalendarWithInput({
-  label,
-  onChange,
-}: {
-  label?: string;
-  onChange?: (selected: Date | Date[]) => void;
-}) {
+export function CalendarWithInput({ label }: { label?: string }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
   return (
@@ -22,10 +16,7 @@ export function CalendarWithInput({
         />
         {isCalendarOpen && (
           <div className={style.calendar}>
-            <Calendar
-              onClose={() => setIsCalendarOpen(false)}
-              onChange={onChange}
-            />
+            <Calendar onClose={() => setIsCalendarOpen(false)} />
             {createPortal(
               <div
                 className={style.blurBg}
