@@ -18,6 +18,7 @@ const App = () => {
     >
       <div style={{ width: "200px" }}>
         <DatePicker
+          name="date-picker-name"
           pickerType={PickerTypeEnum.DAY}
           options={{
             locale: "ru",

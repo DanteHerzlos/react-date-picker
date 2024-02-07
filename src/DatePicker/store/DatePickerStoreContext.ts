@@ -25,9 +25,9 @@ export function createDatePickerStore(
   pickerType: PickerTypeEnum = PickerTypeEnum.DAY,
   defaultValue?: Date,
   value?: Date,
+  name?: string
 ) {
   const initialPickerType = pickerType;
-  const monthNames = DateUtils.getMonthNames(locale, monthFormat);
   const weekNames = DateUtils.getWeekNames(locale, weekFormat);
   const years = DateUtils.getYearsInterval(startYear, endYear);
   const dateMask = DateUtils.getDateMask(locale, pickerType);
@@ -41,9 +41,10 @@ export function createDatePickerStore(
   }
 
   return {
+    inputName: name,
     locale,
     weekNames,
-    monthNames,
+    monthFormat,
     years,
     dateMask,
     selectedDate,

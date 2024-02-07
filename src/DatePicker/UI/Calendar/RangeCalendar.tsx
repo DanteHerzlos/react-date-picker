@@ -7,8 +7,8 @@ import { MonthPicker } from "../Pickers/MonthPicker";
 import { PickerTypeEnum } from "../../../DatePicker/types/PickerTypesEnum";
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
 
-export function RangeCalendar({ onClose }: { onClose?: () => void }) {
-  const [dateSelectionIdx, setDateSelectionIdx] = useState<number>(0);
+export function Calendar({ onClose }: { onClose?: () => void }) {
+  const [dateSelectionIdx, setDateSelectionIdx] = useState<number>(1);
   const [date, setDate] = DatePickerStore.useStore((s) => s.selectedDate);
   const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
   const [currentDate, setCurrentDate] = useState<Date>(date || defaultValue);
@@ -16,6 +16,7 @@ export function RangeCalendar({ onClose }: { onClose?: () => void }) {
   const [pickerType, setPickerType] = DatePickerStore.useStore(
     (s) => s.pickerType,
   );
+
 
   useEffect(() => {
     if (date) setCurrentDate(new Date(date));
@@ -31,7 +32,11 @@ export function RangeCalendar({ onClose }: { onClose?: () => void }) {
     const newDate = new Date(currentDate);
     newDate.setFullYear(year);
     if (onClose && initPickerType === PickerTypeEnum.YEAR) onClose();
-    setDate({ selectedDate: newDate });
+    if (initPickerType === PickerTypeEnum.YEAR) {
+      setDate({ selectedDate: newDate });
+    } else {
+      setCurrentDate(newDate);
+    }
     setPickerType({ pickerType: initPickerType });
   }
 
@@ -39,13 +44,31 @@ export function RangeCalendar({ onClose }: { onClose?: () => void }) {
     const newDate = new Date(currentDate);
     newDate.setMonth(month);
     if (onClose && initPickerType === PickerTypeEnum.MONTH) onClose();
-    setDate({ selectedDate: newDate });
+    if (initPickerType === PickerTypeEnum.MONTH) {
+      setDate({ selectedDate: newDate });
+    } else {
+      setCurrentDate(newDate);
+    }
     setPickerType({ pickerType: initPickerType });
   }
 
   function onDayPickHandler(date: Date) {
     onClose && onClose();
     setDate({ selectedDate: date });
+  }
+
+  function onMonthClickHandler() {
+    setPickerType({
+      pickerType:
+        pickerType === initPickerType ? PickerTypeEnum.MONTH : initPickerType,
+    });
+  }
+
+  function onYearClickHandler() {
+    setPickerType({
+      pickerType:
+        pickerType === initPickerType ? PickerTypeEnum.YEAR : initPickerType,
+    });
   }
 
   return (
@@ -56,31 +79,12 @@ export function RangeCalendar({ onClose }: { onClose?: () => void }) {
         date={currentDate.getTime() ? currentDate : new Date()}
         onPrevClick={() => onChangeMonthHandler(-1)}
         onNextClick={() => onChangeMonthHandler(1)}
-        onMonthClick={() =>
-          setPickerType({
-            pickerType:
-              pickerType === initPickerType
-                ? PickerTypeEnum.MONTH
-                : initPickerType,
-          })
-        }
-        onYearClick={() =>
-          setPickerType({
-            pickerType:
-              pickerType === initPickerType
-                ? PickerTypeEnum.YEAR
-                : initPickerType,
-          })
-        }
+        onMonthClick={onMonthClickHandler}
+        onYearClick={onYearClickHandler}
       />
       {
         {
-          year: (
-            <YearPicker
-              onPick={onYearPickHandler}
-              selectedYear={date.getFullYear() || new Date().getFullYear()}
-            />
-          ),
+          year: <YearPicker onPick={onYearPickHandler} selectedDate={date} />,
           month: (
             <MonthPicker
               currentDate={currentDate.getTime() ? currentDate : new Date()}

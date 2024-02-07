@@ -1,4 +1,4 @@
-import { useMemo} from "react";
+import { useMemo } from "react";
 import {
   DatePickerStore,
   IDatePickerStore,
@@ -16,12 +16,14 @@ export function DatePicker({
   pickerType = PickerTypeEnum.DAY,
   mode = ModeTypeEnum.CALENDAR,
   label,
+  name,
   defaultValue,
   value,
   options,
   onChange,
 }: {
-  label?: string
+  name?: string;
+  label?: string;
   pickerType?: PickerTypeEnum;
   mode?: ModeTypeEnum;
   defaultValue?: Date;
@@ -30,10 +32,9 @@ export function DatePicker({
   onChange?: (selected: Date) => void;
 }) {
   const store = useMemo(
-    () => createDatePickerStore(options || {}, pickerType, defaultValue, value),
-    [options, pickerType, value],
+    () => createDatePickerStore(options || {}, pickerType, defaultValue, value, name),
+    [options, pickerType, value, name],
   );
-
   return (
     <DatePickerStore.Provider value={store}>
       <DatePickerWithContext label={label} onChange={onChange} mode={mode} />

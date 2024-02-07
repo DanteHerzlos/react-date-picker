@@ -1,6 +1,6 @@
 import { RangeDate } from "../../../types/RangeDate";
 import { MultiDate } from "../../../types/MultiDate";
-import { DateUtils } from "../../../helpers/DateUtils";
+import { DateUtils, FormatType } from "../../../helpers/DateUtils";
 import { PickerStyleTypesEnum } from "../const/pickerStyleMap";
 
 type CheckDateFnType = (month: number) => false | PickerStyleTypesEnum;
@@ -25,10 +25,11 @@ class BaseMonthsModel<SelectedDateType> {
     selectedDate: SelectedDateType,
     disabledDates: [Date, Date][],
     locale?: string,
+    monthFormat?: FormatType,
     extendCheckDateFns?: CheckDateFnType[],
   ) {
     extendCheckDateFns && this.checkDateFns.push(...extendCheckDateFns);
-    this.monthNames = DateUtils.getMonthNames(locale);
+    this.monthNames = DateUtils.getMonthNames(locale, monthFormat);
     this.disabledDates = disabledDates;
     this.currentDate = currentDate;
     this.selectedDate = selectedDate;
@@ -76,11 +77,19 @@ class DateMonthModel extends BaseMonthsModel<Date> {
     selectedDate: Date,
     disabledDates: [Date, Date][],
     locale?: string,
+    monthFormat?: FormatType,
   ) {
     const extendCheckDateFns = [
       (month: number) => this.isSelected(month) && PickerStyleTypesEnum.ACTIVE,
     ];
-    super(currentDate, selectedDate, disabledDates, locale, extendCheckDateFns);
+    super(
+      currentDate,
+      selectedDate,
+      disabledDates,
+      locale,
+      monthFormat,
+      extendCheckDateFns,
+    );
   }
 
   isSelected(month: number) {
@@ -97,6 +106,7 @@ class RangeMonthModel extends BaseMonthsModel<RangeDate> {
     selectedDate: RangeDate,
     disabledDates: [Date, Date][],
     locale?: string,
+    monthFormat?: FormatType,
   ) {
     const extendCheckDateFns = [
       (month: number) =>
@@ -106,7 +116,14 @@ class RangeMonthModel extends BaseMonthsModel<RangeDate> {
       (month: number) =>
         this.isEndRange(month) && PickerStyleTypesEnum.END_RANGE,
     ];
-    super(currentDate, selectedDate, disabledDates, locale, extendCheckDateFns);
+    super(
+      currentDate,
+      selectedDate,
+      disabledDates,
+      locale,
+      monthFormat,
+      extendCheckDateFns,
+    );
   }
 
   isStartRange(month: number) {
@@ -146,11 +163,19 @@ class MultiMonthModel extends BaseMonthsModel<MultiDate> {
     selectedDate: MultiDate,
     disabledDates: [Date, Date][],
     locale?: string,
+    monthFormat?: FormatType,
   ) {
     const extendCheckDateFns = [
       (day: number) => this.isSelected(day) && PickerStyleTypesEnum.ACTIVE,
     ];
-    super(currentDate, selectedDate, disabledDates, locale, extendCheckDateFns);
+    super(
+      currentDate,
+      selectedDate,
+      disabledDates,
+      locale,
+      monthFormat,
+      extendCheckDateFns,
+    );
   }
 
   isSelected(month: number) {

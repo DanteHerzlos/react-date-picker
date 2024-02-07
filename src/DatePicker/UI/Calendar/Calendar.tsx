@@ -55,6 +55,20 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
     setDate({ selectedDate: date });
   }
 
+  function onMonthClickHandler() {
+    setPickerType({
+      pickerType:
+        pickerType === initPickerType ? PickerTypeEnum.MONTH : initPickerType,
+    });
+  }
+
+  function onYearClickHandler() {
+    setPickerType({
+      pickerType:
+        pickerType === initPickerType ? PickerTypeEnum.YEAR : initPickerType,
+    });
+  }
+
   return (
     <div className={style.container}>
       <NavigatePanel
@@ -63,22 +77,8 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
         date={currentDate.getTime() ? currentDate : new Date()}
         onPrevClick={() => onChangeMonthHandler(-1)}
         onNextClick={() => onChangeMonthHandler(1)}
-        onMonthClick={() =>
-          setPickerType({
-            pickerType:
-              pickerType === initPickerType
-                ? PickerTypeEnum.MONTH
-                : initPickerType,
-          })
-        }
-        onYearClick={() =>
-          setPickerType({
-            pickerType:
-              pickerType === initPickerType
-                ? PickerTypeEnum.YEAR
-                : initPickerType,
-          })
-        }
+        onMonthClick={onMonthClickHandler}
+        onYearClick={onYearClickHandler}
       />
       {
         {

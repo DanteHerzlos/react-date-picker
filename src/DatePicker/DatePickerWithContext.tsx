@@ -3,6 +3,7 @@ import { ModeTypeEnum } from "./DatePicker";
 import { CalendarWithInput } from "./UI/CalendarWithInput/CalendarWithInput";
 import { DatePickerStore } from "./store/DatePickerStoreContext";
 import { useEffect } from "react";
+import { Input } from "./UI/Input/Input";
 
 export function DatePickerWithContext({
   label,
@@ -24,7 +25,12 @@ export function DatePickerWithContext({
       {
         {
           [ModeTypeEnum.INPUT]: <CalendarWithInput label={label} />,
-          [ModeTypeEnum.CALENDAR]: <Calendar />,
+          [ModeTypeEnum.CALENDAR]: (
+            <>
+              <Calendar />
+              <Input isHide/>
+            </>
+          ),
         }[mode]
       }
     </>

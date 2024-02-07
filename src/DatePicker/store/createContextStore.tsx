@@ -39,13 +39,14 @@ export default function createContextStore<Store>(initialState: Store) {
 
   const StoreContext = createContext<UseStoreDataReturnType | null>(null);
 
-  function Provider({value, children }: {value?: Store, children: React.ReactNode }) {
-    let storeData
-    if(value){
-      storeData = useStoreData(value)
-    } else {
-      storeData = useStoreData(initialState)
-    }
+  function Provider({
+    value,
+    children,
+  }: {
+    value?: Store;
+    children: React.ReactNode;
+  }) {
+    const storeData = useStoreData(value || initialState);
     return (
       <StoreContext.Provider value={storeData}>
         {children}

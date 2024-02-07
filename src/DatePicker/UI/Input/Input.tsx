@@ -11,17 +11,21 @@ export function Input({
   onCalendarClick,
   onInvalid,
   label,
+  isHide = false,
   customValidationMessage,
 }: {
   onCalendarClick?: () => void;
   onInvalid?: (e: React.FormEvent<HTMLInputElement>) => void;
   label?: string;
+  isHide?: boolean;
   customValidationMessage?: string;
 }) {
+  // TODO add invalidate by disabled Date
   const inputRef = useRef<HTMLInputElement>(null);
   const [dateInputModel] = DatePickerStore.useStore((s) => s.dateInputModel);
   dateInputModel.setElement(inputRef.current);
   const [dateMask] = DatePickerStore.useStore((s) => s.dateMask);
+  const [name] = DatePickerStore.useStore((s) => s.inputName);
   const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
   const [pickerType] = DatePickerStore.useStore((s) => s.pickerType);
   const [invalid, setInvalid] = useState<boolean>(false);
@@ -50,7 +54,8 @@ export function Input({
     event.preventDefault();
     const target = event.currentTarget;
     const position = target.selectionStart!;
-    const { start, end, type } = dateInputModel.getSelectionRangeByPosition(position);
+    const { start, end, type } =
+      dateInputModel.getSelectionRangeByPosition(position);
     target.setSelectionRange(start, end);
 
     if (event.key === "ArrowLeft") dateInputModel.setPrevRange();
@@ -89,10 +94,14 @@ export function Input({
       selectedDate: dateValues.isAllSet() ? dateValues.getDate() : new Date(""),
     });
   }
-
   return (
-    <div className={style.container}>
+    <div
+      className={
+        isHide ? [style.container, style._hide].join(" ") : style.container
+      }
+    >
       <input
+        name={name}
         onInvalid={onInvalidHandler}
         onBlur={onBlurHandler}
         defaultValue={defaultValue?.toLocaleDateString() || ""}
