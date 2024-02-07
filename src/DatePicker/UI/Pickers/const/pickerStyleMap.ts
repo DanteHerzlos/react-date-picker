@@ -10,13 +10,15 @@ export const enum PickerStyleTypesEnum {
   END_RANGE = "endRange",
 }
 
-export const pickerStyleMap: { [key in PickerStyleTypesEnum]: string } = {
-  default: style.day,
-  active: [style.day, style._active].join(" "),
-  current: [style.day, style._current].join(" "),
-  disabled: [style.day, style._disabled].join(" "),
-  startRange: [style.day, style._startRange].join(" "),
-  middleRange: [style.day, style._middleRange].join(" "),
-  endRange: [style.day, style._endRange].join(" "),
-};
-
+export function getPickerStyleMapByType(type: "day" | "month" | "year") {
+  const pickerStyleMap: { [key in PickerStyleTypesEnum]: string } = {
+    default: style[type],
+    active: [style[type], style._active].join(" "),
+    current: [style[type], style._current].join(" "),
+    disabled: [style[type], style._disabled].join(" "),
+    startRange: [style[type], style._startRange].join(" "),
+    middleRange: [style[type], style._middleRange].join(" "),
+    endRange: [style[type], style._endRange].join(" "),
+  };
+  return pickerStyleMap;
+}

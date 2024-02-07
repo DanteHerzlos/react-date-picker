@@ -82,12 +82,7 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
       />
       {
         {
-          year: (
-            <YearPicker
-              onPick={onYearPickHandler}
-              selectedYear={date.getFullYear() || new Date().getFullYear()}
-            />
-          ),
+          year: <YearPicker onPick={onYearPickHandler} selectedDate={date} />,
           month: (
             <MonthPicker
               currentDate={currentDate.getTime() ? currentDate : new Date()}

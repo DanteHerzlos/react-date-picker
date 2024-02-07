@@ -1,7 +1,11 @@
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
 import style from "./Pickers.module.css";
-import { pickerStyleMap } from "./const/pickerStyleMap";
-import { DaysModel } from "./DaysModel";
+import { RangeDate } from "../../types/RangeDate";
+import { MultiDate } from "../../types/MultiDate";
+import { getPickerStyleMapByType } from "./const/pickerStyleMap";
+import { getDaysModel } from "./models/DaysModel";
+
+const pickerStyleMap = getPickerStyleMapByType("day");
 
 export function DayPicker({
   currentDate,
@@ -9,13 +13,13 @@ export function DayPicker({
   onPick,
 }: {
   currentDate: Date;
-  selectedDate: Date;
+  selectedDate: Date | RangeDate | MultiDate;
   onPick: (date: Date) => void;
 }) {
   const [weekNames] = DatePickerStore.useStore((s) => s.weekNames);
   const [disabledDates] = DatePickerStore.useStore((s) => s.disabledDates);
-  const daysModel = new DaysModel(currentDate, selectedDate, disabledDates)
-  
+  const daysModel = getDaysModel(currentDate, selectedDate, disabledDates);
+
   function onDatePickHandler(day: number) {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();

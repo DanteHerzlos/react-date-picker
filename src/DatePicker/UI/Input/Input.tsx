@@ -2,7 +2,7 @@ import { DatePickerStore } from "../../store/DatePickerStoreContext";
 import { useEffect, useRef, useState } from "react";
 import style from "./Input.module.css";
 import { CalendarIcon } from "../../icons/CalendarIcon";
-import { DateValues } from "../../helpers/DateValues";
+import { DateValues } from "../../types/DateValues";
 
 const numericKeys = new Set(new Array(10).fill(0).map((_, i) => i.toString()));
 const dateValues = new DateValues();

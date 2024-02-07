@@ -25,7 +25,7 @@ export class DateUtils {
     for (let i = start; i < end; i++) years.push(i);
     return years;
   }
-
+  
   static getMonthNames(
     locale: string = "default",
     format: FormatType = "long",

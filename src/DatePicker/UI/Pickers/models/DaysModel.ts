@@ -1,7 +1,7 @@
-import { DateUtils } from "../../helpers/DateUtils";
-import { PickerStyleTypesEnum } from "./const/pickerStyleMap";
-import { RangeDate } from "../../helpers/RangeDate";
-import { MultiDate } from "../../helpers/MultiDate";
+import { DateUtils } from "../../../helpers/DateUtils";
+import { PickerStyleTypesEnum } from "../const/pickerStyleMap";
+import { RangeDate } from "../../../types/RangeDate";
+import { MultiDate } from "../../../types/MultiDate";
 
 type CheckDateFnType = (day: number) => false | PickerStyleTypesEnum;
 
@@ -54,7 +54,7 @@ class BaseDaysModel<SelectedDateType> {
     return false;
   }
 
-  protected generateDays() {
+  generateDays() {
     const firstDayOfMonth = DateUtils.getFirstDayOfMonth(this.currentDate);
     const lastDayOfMonth = DateUtils.getLastDayOfMonth(this.currentDate);
     const start = firstDayOfMonth.getDate();
@@ -68,11 +68,12 @@ class BaseDaysModel<SelectedDateType> {
       }
       days.push({ value: day, styleType });
     }
+    this.days = days;
     return days;
   }
 }
 
-export class DaysModel extends BaseDaysModel<Date> {
+class DaysModel extends BaseDaysModel<Date> {
   constructor(
     currentDate: Date,
     selectedDate: Date,
@@ -82,7 +83,6 @@ export class DaysModel extends BaseDaysModel<Date> {
       (day: number) => this.isSelected(day) && PickerStyleTypesEnum.ACTIVE,
     ];
     super(currentDate, selectedDate, disabledDates, extendCheckDateFns);
-    this.days = this.generateDays();
   }
   isSelected(day: number) {
     return (
@@ -93,7 +93,7 @@ export class DaysModel extends BaseDaysModel<Date> {
   }
 }
 
-export class RangeDaysModel extends BaseDaysModel<RangeDate> {
+class RangeDaysModel extends BaseDaysModel<RangeDate> {
   constructor(
     currentDate: Date,
     selectedDate: RangeDate,
@@ -107,7 +107,6 @@ export class RangeDaysModel extends BaseDaysModel<RangeDate> {
       (day: number) => this.isEndRange(day) && PickerStyleTypesEnum.END_RANGE,
     ];
     super(currentDate, selectedDate, disabledDates, extendCheckDateFns);
-    this.days = this.generateDays();
   }
   isStartRange(day: number) {
     const startDate = this.selectedDate.getStartDate();
@@ -142,7 +141,7 @@ export class RangeDaysModel extends BaseDaysModel<RangeDate> {
   }
 }
 
-export class MultiDaysModel extends BaseDaysModel<MultiDate> {
+class MultiDaysModel extends BaseDaysModel<MultiDate> {
   constructor(
     currentDate: Date,
     selectedDate: MultiDate,
@@ -152,7 +151,6 @@ export class MultiDaysModel extends BaseDaysModel<MultiDate> {
       (day: number) => this.isSelected(day) && PickerStyleTypesEnum.ACTIVE,
     ];
     super(currentDate, selectedDate, disabledDates, extendCheckDateFns);
-    this.days = this.generateDays();
   }
   isSelected(day: number) {
     for (const date of this.selectedDate.getValues()) {
@@ -166,4 +164,27 @@ export class MultiDaysModel extends BaseDaysModel<MultiDate> {
     }
     return false;
   }
+}
+
+export function getDaysModel<SelectedDateType>(
+  currentDate: Date,
+  selectedDate: SelectedDateType,
+  disabledDates: [Date, Date][],
+) {
+  if(selectedDate instanceof Date) {
+    const model = new DaysModel(currentDate, selectedDate, disabledDates)
+    model.generateDays()
+    return model
+  }
+  if(selectedDate instanceof RangeDate) {
+    const model = new RangeDaysModel(currentDate, selectedDate, disabledDates)
+    model.generateDays()
+    return model
+  }
+  if(selectedDate instanceof MultiDate) {
+    const model = new MultiDaysModel(currentDate, selectedDate, disabledDates)
+    model.generateDays()
+    return model
+  }
+  throw new Error("Can't generate DaysModel. Wrong type for selectedDate")
 }

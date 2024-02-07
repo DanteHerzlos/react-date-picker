@@ -1,15 +1,24 @@
 import { useEffect, useRef } from "react";
 import style from "./Pickers.module.css";
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
+import { getYearModel } from "./models/YearModel";
+import { MultiDate } from "../../types/MultiDate";
+import { RangeDate } from "../../types/RangeDate";
+import {
+  PickerStyleTypesEnum,
+  getPickerStyleMapByType,
+} from "./const/pickerStyleMap";
 
+const pickerStyleMap = getPickerStyleMapByType("year");
 export function YearPicker({
-  selectedYear,
+  selectedDate,
   onPick,
 }: {
-  selectedYear: number;
+  selectedDate: Date | MultiDate | RangeDate;
   onPick?: (year: number) => void;
 }) {
-  const [years] = DatePickerStore.useStore((s) => s.years);
+  const [disabledDates] = DatePickerStore.useStore((s) => s.disabledDates);
+  const yearModel = getYearModel(selectedDate, disabledDates);
   const activeYearRef = useRef<HTMLDivElement | null>();
   useEffect(() => {
     if (activeYearRef)
@@ -18,18 +27,17 @@ export function YearPicker({
 
   return (
     <div className={style.yearPicker}>
-      {years.map((year) => (
+      {yearModel.years.map((year) => (
         <div
-          className={
-            year === selectedYear
-              ? [style.year, style._active].join(" ")
-              : style.year
+          ref={(r) =>
+            year.styleType === PickerStyleTypesEnum.ACTIVE &&
+            (activeYearRef.current = r)
           }
-          ref={(r) => year === selectedYear && (activeYearRef.current = r)}
-          key={year}
-          onClick={() => onPick && onPick(year)}
+          className={pickerStyleMap[year.styleType]}
+          key={year.value}
+          onClick={() => onPick && onPick(year.value)}
         >
-          {year}
+          {year.value}
         </div>
       ))}
     </div>

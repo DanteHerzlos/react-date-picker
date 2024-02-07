@@ -1,5 +1,11 @@
 import style from "./Pickers.module.css";
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
+import { MultiDate } from "../../types/MultiDate";
+import { RangeDate } from "../../types/RangeDate";
+import { getPickerStyleMapByType } from "./const/pickerStyleMap";
+import { getMonthModel } from "./models/MonthModel";
+
+const pickerStyleMap = getPickerStyleMapByType("month");
 
 export function MonthPicker({
   currentDate,
@@ -7,24 +13,26 @@ export function MonthPicker({
   onPick,
 }: {
   currentDate: Date;
-  selectedDate: Date;
+  selectedDate: Date | MultiDate | RangeDate;
   onPick: (month: number) => void;
 }) {
-  const [monthNames] = DatePickerStore.useStore((s) => s.monthNames);
+  const [locale] = DatePickerStore.useStore((s) => s.locale);
+  const [disabledDates] = DatePickerStore.useStore((s) => s.disabledDates);
+  const monthModel = getMonthModel(
+    currentDate,
+    selectedDate,
+    disabledDates,
+    locale,
+  );
   return (
     <div className={style.monthPicker}>
-      {monthNames.map((monthName, index) => (
+      {monthModel.months.map((month, index) => (
         <div
-          className={
-            index === selectedDate.getMonth() &&
-            currentDate.getFullYear() === selectedDate.getFullYear()
-              ? [style.month, style._active].join(" ")
-              : style.month
-          }
+          className={pickerStyleMap[month.styleType]}
           key={index}
           onClick={() => onPick && onPick(index)}
         >
-          {monthName}
+          {month.name}
         </div>
       ))}
     </div>
