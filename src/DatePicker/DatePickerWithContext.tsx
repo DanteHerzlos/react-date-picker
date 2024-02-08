@@ -14,7 +14,7 @@ export function DatePickerWithContext({
   const [selectedDate] = DatePickerStore.useStore((s) => s.selectedDate);
 
   useEffect(() => {
-    onChange && onChange(selectedDate);
+    onChange && onChange(selectedDate.getValue());
   }, [selectedDate.toString()]);
 
   return (

@@ -4,6 +4,7 @@ import { RangeDate } from "../../types/RangeDate";
 import { MultiDate } from "../../types/MultiDate";
 import { getPickerStyleMapByType } from "./const/pickerStyleMap";
 import { getDaysModel } from "./models/DaysModel";
+import { DateAdapter } from "DatePicker/types/DateAdapter";
 
 const pickerStyleMap = getPickerStyleMapByType("day");
 
@@ -13,7 +14,7 @@ export function DayPicker({
   onPick,
 }: {
   currentDate: Date;
-  selectedDate: Date | RangeDate | MultiDate;
+  selectedDate: DateAdapter | RangeDate | MultiDate;
   onPick: (date: Date) => void;
 }) {
   const [weekNames] = DatePickerStore.useStore((s) => s.weekNames);

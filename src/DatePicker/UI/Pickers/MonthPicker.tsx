@@ -4,6 +4,7 @@ import { MultiDate } from "../../types/MultiDate";
 import { RangeDate } from "../../types/RangeDate";
 import { getPickerStyleMapByType } from "./const/pickerStyleMap";
 import { getMonthModel } from "./models/MonthModel";
+import { DateAdapter } from "DatePicker/types/DateAdapter";
 
 const pickerStyleMap = getPickerStyleMapByType("month");
 
@@ -13,7 +14,7 @@ export function MonthPicker({
   onPick,
 }: {
   currentDate: Date;
-  selectedDate: Date | MultiDate | RangeDate;
+  selectedDate: DateAdapter | MultiDate | RangeDate;
   onPick: (month: number) => void;
 }) {
   const [locale] = DatePickerStore.useStore((s) => s.locale);

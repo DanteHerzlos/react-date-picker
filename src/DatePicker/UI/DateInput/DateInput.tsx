@@ -4,18 +4,10 @@ import style from "./DateInput.module.css";
 import { CalendarIcon } from "../../icons/CalendarIcon";
 import { DateValues } from "../../types/DateValues";
 import { Input } from "../Input/Input";
+import { DateAdapter } from "DatePicker/types/DateAdapter";
 
 const numericKeys = new Set(new Array(10).fill(0).map((_, i) => i.toString()));
 const dateValues = new DateValues();
-
-function isDisabledDate(date: Date, disabledDates: [Date, Date][]) {
-  for (const [start, end] of disabledDates) {
-    if (date >= start && date <= end) {
-      return true;
-    }
-  }
-  return false;
-}
 
 export function DateInput({
   onCalendarClick,
@@ -47,12 +39,12 @@ export function DateInput({
   }, [pickerType]);
 
   useEffect(() => {
-    if (!isNaN(selectedDate.getTime())) {
-      dateValues.setValuesByDate(selectedDate);
+    if (selectedDate.isValid()) {
+      dateValues.setValuesByDate(selectedDate.getValue());
       inputRef.current!.value = dateMask.getMaskByDates(
         dateValues.getStringValues(),
       );
-      if (isDisabledDate(selectedDate, disabledDates)) {
+      if (selectedDate.isInteresept(disabledDates)) {
         inputRef.current?.setCustomValidity("selecte disabled date");
       } else {
         inputRef.current?.setCustomValidity("");
@@ -99,7 +91,9 @@ export function DateInput({
   function onBlurHandler() {
     if (disabled) return;
     setSelectedDate({
-      selectedDate: dateValues.isAllSet() ? dateValues.getDate() : new Date(""),
+      selectedDate: dateValues.isAllSet()
+        ? new DateAdapter(dateValues.getDate())
+        : new DateAdapter(),
     });
   }
   return (

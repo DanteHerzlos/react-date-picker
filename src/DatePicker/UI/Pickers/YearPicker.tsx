@@ -8,13 +8,14 @@ import {
   PickerStyleTypesEnum,
   getPickerStyleMapByType,
 } from "./const/pickerStyleMap";
+import { DateAdapter } from "DatePicker/types/DateAdapter";
 
 const pickerStyleMap = getPickerStyleMapByType("year");
 export function YearPicker({
   selectedDate,
   onPick,
 }: {
-  selectedDate: Date | MultiDate | RangeDate;
+  selectedDate: DateAdapter | MultiDate | RangeDate;
   onPick?: (year: number) => void;
 }) {
   const [disabledDates] = DatePickerStore.useStore((s) => s.disabledDates);

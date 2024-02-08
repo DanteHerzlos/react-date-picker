@@ -2,6 +2,7 @@ import { RangeDate } from "../../../types/RangeDate";
 import { MultiDate } from "../../../types/MultiDate";
 import { DateUtils, FormatType } from "../../../helpers/DateUtils";
 import { PickerStyleTypesEnum } from "../const/pickerStyleMap";
+import { DateAdapter } from "DatePicker/types/DateAdapter";
 
 type CheckDateFnType = (month: number) => false | PickerStyleTypesEnum;
 type MonthsListType = {
@@ -71,10 +72,10 @@ class BaseMonthsModel<SelectedDateType> {
   }
 }
 
-class DateMonthModel extends BaseMonthsModel<Date> {
+class DateMonthModel extends BaseMonthsModel<DateAdapter> {
   constructor(
     currentDate: Date,
-    selectedDate: Date,
+    selectedDate: DateAdapter,
     disabledDates: [Date, Date][],
     locale?: string,
     monthFormat?: FormatType,
@@ -94,8 +95,8 @@ class DateMonthModel extends BaseMonthsModel<Date> {
 
   isSelected(month: number) {
     return (
-      this.currentDate.getFullYear() === this.selectedDate.getFullYear() &&
-      month === this.selectedDate.getMonth()
+      this.currentDate.getFullYear() === this.selectedDate.getValue().getFullYear() &&
+      month === this.selectedDate.getValue().getMonth()
     );
   }
 }
@@ -179,7 +180,7 @@ class MultiMonthModel extends BaseMonthsModel<MultiDate> {
   }
 
   isSelected(month: number) {
-    for (const date of this.selectedDate.getValues()) {
+    for (const date of this.selectedDate.getValue()) {
       if (
         this.currentDate.getFullYear() === date.getFullYear() &&
         month === date.getMonth()
@@ -197,7 +198,7 @@ export function getMonthModel<SelectedDateType>(
   disabledDates: [Date, Date][],
   locale?: string,
 ) {
-  if (selectedDate instanceof Date) {
+  if (selectedDate instanceof DateAdapter) {
     const model = new DateMonthModel(
       currentDate,
       selectedDate,

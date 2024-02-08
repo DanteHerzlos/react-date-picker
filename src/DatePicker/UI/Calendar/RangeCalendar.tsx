@@ -6,9 +6,9 @@ import { DayPicker } from "../Pickers/DayPicker";
 import { MonthPicker } from "../Pickers/MonthPicker";
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
 import { PickerTypeEnum } from "DatePicker/types/PickerType";
-import { DateAdapter } from "DatePicker/types/DateAdapter";
 
-export function Calendar({ onClose }: { onClose?: () => void }) {
+export function RangeCalendar({ onClose }: { onClose?: () => void }) {
+  const [selectedDateIdx, setSelectedDateIdx] = useState<number>(0)
   const [date, setDate] = DatePickerStore.useStore((s) => s.selectedDate);
   const [disabled] = DatePickerStore.useStore((s) => s.disabled);
   const [readOnly] = DatePickerStore.useStore((s) => s.readOnly);
@@ -18,10 +18,10 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
   );
 
   const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
-  const [currentDate, setCurrentDate] = useState<Date>(date.getValue() || defaultValue);
+  const [currentDate, setCurrentDate] = useState<Date>(date || defaultValue);
 
   useEffect(() => {
-    if (date) setCurrentDate(new Date(date.getValue()));
+    if (date) setCurrentDate(new Date(date));
   }, [date]);
 
   function onChangeMonthHandler(diff: number) {
@@ -35,7 +35,7 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
     newDate.setFullYear(year);
     if (onClose && initPickerType === PickerTypeEnum.YEAR) onClose();
     if (initPickerType === PickerTypeEnum.YEAR) {
-      setDate({ selectedDate: new DateAdapter(newDate) });
+      setDate({ selectedDate: newDate });
     } else {
       setCurrentDate(newDate);
     }
@@ -47,7 +47,7 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
     newDate.setMonth(month);
     if (onClose && initPickerType === PickerTypeEnum.MONTH) onClose();
     if (initPickerType === PickerTypeEnum.MONTH) {
-      setDate({ selectedDate: new DateAdapter(newDate) });
+      setDate({ selectedDate: newDate });
     } else {
       setCurrentDate(newDate);
     }
@@ -57,7 +57,7 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
   function onDayPickHandler(date: Date) {
     if (disabled || readOnly) return;
     onClose && onClose();
-    setDate({ selectedDate: new DateAdapter(date) });
+    setDate({ selectedDate: date });
   }
 
   function onMonthClickHandler() {

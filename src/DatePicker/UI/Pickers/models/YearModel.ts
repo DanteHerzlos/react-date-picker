@@ -1,6 +1,7 @@
 import { RangeDate } from "../../../types/RangeDate";
 import { MultiDate } from "../../../types/MultiDate";
 import { PickerStyleTypesEnum } from "../const/pickerStyleMap";
+import { DateAdapter } from "DatePicker/types/DateAdapter";
 
 type CheckDateFnType = (month: number) => false | PickerStyleTypesEnum;
 type YearsListType = {
@@ -60,8 +61,8 @@ class BaseYearModel<SelectedDateType> {
   }
 }
 
-class DateYearModel extends BaseYearModel<Date> {
-  constructor(selectedDate: Date, disabledDates: [Date, Date][]) {
+class DateYearModel extends BaseYearModel<DateAdapter> {
+  constructor(selectedDate: DateAdapter, disabledDates: [Date, Date][]) {
     const extendCheckDateFns = [
       (year: number) => this.isSelected(year) && PickerStyleTypesEnum.ACTIVE,
     ];
@@ -69,7 +70,7 @@ class DateYearModel extends BaseYearModel<Date> {
   }
 
   isSelected(year: number) {
-    return year === this.selectedDate.getFullYear();
+    return year === this.selectedDate.getValue().getFullYear();
   }
 }
 
@@ -115,7 +116,7 @@ class MultiYearModel extends BaseYearModel<MultiDate> {
   }
 
   isSelected(year: number) {
-    for (const date of this.selectedDate.getValues()) {
+    for (const date of this.selectedDate.getValue()) {
       if (year === date.getFullYear()) {
         return true;
       }
@@ -128,7 +129,7 @@ export function getYearModel<SelectedDateType>(
   selectedDate: SelectedDateType,
   disabledDates: [Date, Date][],
 ) {
-  if (selectedDate instanceof Date) {
+  if (selectedDate instanceof DateAdapter) {
     const model = new DateYearModel(selectedDate, disabledDates);
     model.generateYears();
     return model;

@@ -2,6 +2,7 @@ import { DateUtils } from "../../../helpers/DateUtils";
 import { PickerStyleTypesEnum } from "../const/pickerStyleMap";
 import { RangeDate } from "../../../types/RangeDate";
 import { MultiDate } from "../../../types/MultiDate";
+import { DateAdapter } from "DatePicker/types/DateAdapter";
 
 type CheckDateFnType = (day: number) => false | PickerStyleTypesEnum;
 
@@ -73,10 +74,10 @@ class BaseDaysModel<SelectedDateType> {
   }
 }
 
-class DaysModel extends BaseDaysModel<Date> {
+class DaysModel extends BaseDaysModel<DateAdapter> {
   constructor(
     currentDate: Date,
-    selectedDate: Date,
+    selectedDate: DateAdapter,
     disabledDates: [Date, Date][],
   ) {
     const extendCheckDateFns = [
@@ -86,9 +87,9 @@ class DaysModel extends BaseDaysModel<Date> {
   }
   isSelected(day: number) {
     return (
-      this.currentDate.getFullYear() === this.selectedDate.getFullYear() &&
-      this.currentDate.getMonth() === this.selectedDate.getMonth() &&
-      day === this.selectedDate.getDate()
+      this.currentDate.getFullYear() === this.selectedDate.getValue().getFullYear() &&
+      this.currentDate.getMonth() === this.selectedDate.getValue().getMonth() &&
+      day === this.selectedDate.getValue().getDate()
     );
   }
 }
@@ -153,7 +154,7 @@ class MultiDaysModel extends BaseDaysModel<MultiDate> {
     super(currentDate, selectedDate, disabledDates, extendCheckDateFns);
   }
   isSelected(day: number) {
-    for (const date of this.selectedDate.getValues()) {
+    for (const date of this.selectedDate.getValue()) {
       if (
         this.currentDate.getFullYear() === date.getFullYear() &&
         this.currentDate.getMonth() === date.getMonth() &&
@@ -171,7 +172,7 @@ export function getDaysModel<SelectedDateType>(
   selectedDate: SelectedDateType,
   disabledDates: [Date, Date][],
 ) {
-  if(selectedDate instanceof Date) {
+  if(selectedDate instanceof DateAdapter) {
     const model = new DaysModel(currentDate, selectedDate, disabledDates)
     model.generateDays()
     return model
