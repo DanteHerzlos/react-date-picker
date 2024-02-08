@@ -4,12 +4,14 @@ import style from "./Calendar.module.css";
 import { YearPicker } from "../Pickers/YearPicker";
 import { DayPicker } from "../Pickers/DayPicker";
 import { MonthPicker } from "../Pickers/MonthPicker";
-import { PickerTypeEnum } from "../../../DatePicker/types/PickerTypesEnum";
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
+import { PickerTypeEnum } from "DatePicker/types/PickerType";
 
 export function Calendar({ onClose }: { onClose?: () => void }) {
   const [date, setDate] = DatePickerStore.useStore((s) => s.selectedDate);
   const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
+  const [disabled] = DatePickerStore.useStore((s) => s.disabled);
+  const [readOnly] = DatePickerStore.useStore((s) => s.readOnly);
   const [currentDate, setCurrentDate] = useState<Date>(date || defaultValue);
   const [initPickerType] = DatePickerStore.useStore((s) => s.initialPickerType);
   const [pickerType, setPickerType] = DatePickerStore.useStore(
@@ -51,6 +53,7 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
   }
 
   function onDayPickHandler(date: Date) {
+    if (disabled || readOnly) return;
     onClose && onClose();
     setDate({ selectedDate: date });
   }
@@ -60,6 +63,7 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
       pickerType:
         pickerType === initPickerType ? PickerTypeEnum.MONTH : initPickerType,
     });
+    if (disabled || readOnly) return;
   }
 
   function onYearClickHandler() {
@@ -67,10 +71,17 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
       pickerType:
         pickerType === initPickerType ? PickerTypeEnum.YEAR : initPickerType,
     });
+    if (disabled || readOnly) return;
   }
 
   return (
-    <div className={style.container}>
+    <div
+      className={
+        disabled
+          ? [style.container, style._disabled].join(" ")
+          : style.container
+      }
+    >
       <NavigatePanel
         isMonthPicker={pickerType !== PickerTypeEnum.YEAR}
         isMonthNavigation={pickerType === PickerTypeEnum.DAY}

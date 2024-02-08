@@ -1,17 +1,14 @@
-import { Calendar } from "./UI/Calendar/Calendar";
-import { ModeTypeEnum } from "./DatePicker";
-import { CalendarWithInput } from "./UI/CalendarWithInput/CalendarWithInput";
+import { CalendarWithHideInput } from "./Layouts/CalendarWithHideInput/CalendarWithHideInput";
+import { CalendarWithInput } from "./Layouts/CalendarWithInput/CalendarWithInput";
 import { DatePickerStore } from "./store/DatePickerStoreContext";
 import { useEffect } from "react";
-import { Input } from "./UI/Input/Input";
+import { ModeType } from "./types/ModeType";
 
 export function DatePickerWithContext({
-  label,
   mode,
   onChange,
 }: {
-  label?: string;
-  mode: ModeTypeEnum;
+  mode: ModeType;
   onChange?: (selected: Date) => void;
 }) {
   const [selectedDate] = DatePickerStore.useStore((s) => s.selectedDate);
@@ -24,13 +21,8 @@ export function DatePickerWithContext({
     <>
       {
         {
-          [ModeTypeEnum.INPUT]: <CalendarWithInput label={label} />,
-          [ModeTypeEnum.CALENDAR]: (
-            <>
-              <Calendar />
-              <Input isHide/>
-            </>
-          ),
+          input: <CalendarWithInput />,
+          calendar: <CalendarWithHideInput />,
         }[mode]
       }
     </>

@@ -1,19 +1,16 @@
-import { Input } from "../Input/Input";
-import { Calendar } from "../Calendar/Calendar";
+import { DateInput } from "../../UI/DateInput/DateInput";
+import { Calendar } from "../../UI/Calendar/Calendar";
 import style from "./CalendarWithInput.module.css";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 
-export function CalendarWithInput({ label }: { label?: string }) {
+export function CalendarWithInput() {
   const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
   return (
     <>
       <div className={style.container}>
-        <Input
-          label={label}
-          onCalendarClick={() => setIsCalendarOpen((prev) => !prev)}
-        />
+        <DateInput onCalendarClick={() => setIsCalendarOpen((prev) => !prev)} />
         {isCalendarOpen && (
           <div className={style.calendar}>
             <Calendar onClose={() => setIsCalendarOpen(false)} />

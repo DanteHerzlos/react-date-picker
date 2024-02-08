@@ -1,13 +1,13 @@
-import { PickerTypeEnum } from "../types/PickerTypesEnum";
 import { toTitleCase } from "./toTitleCase";
 import { DateMask } from "./DateMask";
+import { PickerType, PickerTypeEnum } from "../types/PickerType";
 
 export type FormatType = "short" | "long" | "narrow";
 
 export class DateUtils {
   static getDateMask(
     locale: string,
-    pickerType: PickerTypeEnum = PickerTypeEnum.DAY,
+    pickerType: PickerType = PickerTypeEnum.DAY,
   ) {
     return new DateMask(locale, pickerType);
   }
@@ -58,7 +58,7 @@ export class DateUtils {
     return weekNames;
   }
 
-  static getDateWithRestriction(date: Date, mode: PickerTypeEnum) {
+  static getDateWithRestriction(date: Date, mode: PickerType) {
     if (mode === PickerTypeEnum.YEAR) {
       return new Date(date.getFullYear(), 0, 1);
     }

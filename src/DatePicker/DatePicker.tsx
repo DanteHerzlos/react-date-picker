@@ -1,43 +1,48 @@
 import { useMemo } from "react";
 import {
   DatePickerStore,
-  IDatePickerStore,
   createDatePickerStore,
 } from "./store/DatePickerStoreContext";
-import { PickerTypeEnum } from "./types/PickerTypesEnum";
 import { DatePickerWithContext } from "./DatePickerWithContext";
+import { FormatType } from "./helpers/DateUtils";
+import { ModeType } from "./types/ModeType";
 
-export enum ModeTypeEnum {
-  INPUT = "input",
-  CALENDAR = "calendar",
+
+export interface IDatePickerOptions {
+  locale?: string;
+  monthFormat?: FormatType;
+  weekFormat?: FormatType;
+  startYear?: number;
+  endYear?: number;
+  pickerType?: PickerType;
 }
 
-export function DatePicker({
-  pickerType = PickerTypeEnum.DAY,
-  mode = ModeTypeEnum.CALENDAR,
-  label,
-  name,
-  defaultValue,
-  value,
-  options,
-  onChange,
-}: {
+interface IBaseDatePickerProps<DateType> {
+  required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
   name?: string;
   label?: string;
-  pickerType?: PickerTypeEnum;
-  mode?: ModeTypeEnum;
-  defaultValue?: Date;
-  value?: Date;
-  options?: IDatePickerStore;
-  onChange?: (selected: Date) => void;
-}) {
-  const store = useMemo(
-    () => createDatePickerStore(options || {}, pickerType, defaultValue, value, name),
-    [options, pickerType, value, name],
-  );
+  pickerType?: PickerType;
+  mode?: ModeType;
+  disabledDates?: [Date, Date][];
+  options?: IDatePickerOptions;
+  onChange?: (selected: DateType) => void;
+  defaultValue?: DateType;
+  value?: DateType;
+  /**
+   * @experimental
+   * Custom React input element.
+  */
+  customInput?: React.ReactElement;
+}
+
+export function DatePicker(props: IBaseDatePickerProps<Date>) {
+  const mode = props.mode || 'input';
+  const store = useMemo(() => createDatePickerStore(props), [props]);
   return (
     <DatePickerStore.Provider value={store}>
-      <DatePickerWithContext label={label} onChange={onChange} mode={mode} />
+      <DatePickerWithContext onChange={props.onChange} mode={mode} />
     </DatePickerStore.Provider>
   );
 }

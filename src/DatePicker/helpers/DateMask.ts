@@ -1,5 +1,5 @@
-import { PickerTypeEnum } from "../types/PickerTypesEnum";
-import { DateValuesType } from "./DateValues";
+import { DateValuesType } from "../types/DateValues"
+import { PickerType, PickerTypeEnum } from "../types/PickerType"
 
 type PositionType = "YYYY" | "MM" | "DD" | "NN" 
 
@@ -15,7 +15,7 @@ export class DateMask {
 
   constructor(
     locale: string,
-    pickerType: PickerTypeEnum = PickerTypeEnum.DAY,
+    pickerType: PickerType = 'day',
   ) {
     const date = new Date(1970, 11, 29);
     const localeString = date.toLocaleDateString(locale);

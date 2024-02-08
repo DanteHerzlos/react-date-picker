@@ -1,32 +1,45 @@
-import { DateUtils, FormatType } from "../helpers/DateUtils";
+import { DateUtils } from "../helpers/DateUtils";
 import createContextStore from "./createContextStore";
-import { PickerTypeEnum } from "../types/PickerTypesEnum";
 import { DateInputModel } from "../helpers/InputUtils";
+import { IDatePickerOptions } from "../DatePicker";
+import { ModeType } from "../types/ModeType";
+import { PickerType, PickerTypeEnum } from "DatePicker/types/PickerType";
 
-export interface IDatePickerStore {
-  locale?: string;
-  monthFormat?: FormatType;
-  weekFormat?: FormatType;
-  startYear?: number;
-  endYear?: number;
-  pickerType?: PickerTypeEnum;
+interface IDatePickerStoreProps {
+  options?: IDatePickerOptions;
+  required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+  name?: string;
+  label?: string;
+  pickerType?: PickerType;
+  mode?: ModeType;
   disabledDates?: [Date, Date][];
+  defaultValue?: Date;
+  value?: Date;
+  customInput?: React.ReactElement | any;
 }
 
-export function createDatePickerStore(
-  {
+export function createDatePickerStore({
+  options = {},
+  disabledDates = [],
+  pickerType = PickerTypeEnum.DAY,
+  defaultValue,
+  value,
+  name,
+  readOnly = false,
+  disabled = false,
+  required = false,
+  label,
+  customInput,
+}: IDatePickerStoreProps) {
+  const {
     locale = "default",
     monthFormat,
     weekFormat,
     startYear,
     endYear,
-    disabledDates = [],
-  }: IDatePickerStore,
-  pickerType: PickerTypeEnum = PickerTypeEnum.DAY,
-  defaultValue?: Date,
-  value?: Date,
-  name?: string
-) {
+  } = options;
   const initialPickerType = pickerType;
   const weekNames = DateUtils.getWeekNames(locale, weekFormat);
   const years = DateUtils.getYearsInterval(startYear, endYear);
@@ -41,7 +54,10 @@ export function createDatePickerStore(
   }
 
   return {
-    inputName: name,
+    required,
+    disabled,
+    readOnly,
+    name,
     locale,
     weekNames,
     monthFormat,
@@ -52,7 +68,9 @@ export function createDatePickerStore(
     initialPickerType,
     defaultValue,
     dateInputModel,
-    disabledDates
+    disabledDates,
+    label,
+    CustomInput: customInput,
   };
 }
 

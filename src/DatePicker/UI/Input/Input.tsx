@@ -1,124 +1,75 @@
-import { DatePickerStore } from "../../store/DatePickerStoreContext";
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useState } from "react";
 import style from "./Input.module.css";
-import { CalendarIcon } from "../../icons/CalendarIcon";
-import { DateValues } from "../../types/DateValues";
 
-const numericKeys = new Set(new Array(10).fill(0).map((_, i) => i.toString()));
-const dateValues = new DateValues();
-
-export function Input({
-  onCalendarClick,
-  onInvalid,
-  label,
-  isHide = false,
-  customValidationMessage,
-}: {
-  onCalendarClick?: () => void;
-  onInvalid?: (e: React.FormEvent<HTMLInputElement>) => void;
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  isLoading?: boolean;
   label?: string;
-  isHide?: boolean;
   customValidationMessage?: string;
-}) {
-  // TODO add invalidate by disabled Date
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [dateInputModel] = DatePickerStore.useStore((s) => s.dateInputModel);
-  dateInputModel.setElement(inputRef.current);
-  const [dateMask] = DatePickerStore.useStore((s) => s.dateMask);
-  const [name] = DatePickerStore.useStore((s) => s.inputName);
-  const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
-  const [pickerType] = DatePickerStore.useStore((s) => s.pickerType);
+  isNumeric?: boolean;
+  inputClassName?: string;
+}
+
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  {
+    customValidationMessage,
+    isLoading = false,
+    label,
+    inputClassName,
+    isNumeric,
+    ...props
+  },
+  ref,
+) {
   const [invalid, setInvalid] = useState<boolean>(false);
   const [validationMessage, setValidatiopnMessage] = useState<string>("");
-  const [selectedDate, setSelectedDate] = DatePickerStore.useStore(
-    (s) => s.selectedDate,
-  );
-
-  useEffect(() => {
-    dateValues.resetValuesByType(pickerType);
-  }, [pickerType]);
-
-  useEffect(() => {
-    if (!isNaN(selectedDate.getTime())) {
-      dateValues.setValuesByDate(selectedDate);
-      inputRef.current!.value = dateMask.getMaskByDates(
-        dateValues.getStringValues(),
-      );
-      setInvalid(false);
-    } else {
-      setInvalid(true);
-    }
-  }, [selectedDate.toString()]);
-
-  function onKeyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
-    event.preventDefault();
-    const target = event.currentTarget;
-    const position = target.selectionStart!;
-    const { start, end, type } =
-      dateInputModel.getSelectionRangeByPosition(position);
-    target.setSelectionRange(start, end);
-
-    if (event.key === "ArrowLeft") dateInputModel.setPrevRange();
-    if (event.key === "ArrowRight") dateInputModel.setNextRange();
-    if (event.key === "Tab") dateInputModel.setCircleNextRange();
-    if (event.key === "Enter") target.blur();
-    if (event.key === "Backspace") {
-      dateValues.clear(type);
-      dateInputModel.setValueByDateValue(dateValues);
-      target.setSelectionRange(start, end);
-    }
-
-    if (numericKeys.has(event.key)) {
-      type && dateValues.appendDigitToValueByType(type, event.key);
-      dateInputModel.setValueByDateValue(dateValues);
-      target.setSelectionRange(start, end);
-    }
-  }
-
-  function onClickHandler(event: React.FormEvent<HTMLInputElement>) {
-    const target = event.currentTarget;
-    if (!target.value) target.value = dateMask.mask;
-    dateInputModel.setCurrentRange();
-  }
 
   function onInvalidHandler(e: React.FormEvent<HTMLInputElement>) {
     e.preventDefault();
     setInvalid(true);
     if (customValidationMessage) setValidatiopnMessage(customValidationMessage);
     else setValidatiopnMessage(e.currentTarget.validationMessage);
-    if (onInvalid) onInvalid(e);
+
+    if (props.onInvalid) props.onInvalid(e);
   }
 
-  function onBlurHandler() {
-    setSelectedDate({
-      selectedDate: dateValues.isAllSet() ? dateValues.getDate() : new Date(""),
-    });
+  function onBlurHandler(e: React.FocusEvent<HTMLInputElement>) {
+    if (e.currentTarget.validity.valid) setInvalid(false);
+    props.onBlur && props.onBlur(e);
   }
+
+  function onChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
+    setInvalid(false);
+    if (props.onChange) props.onChange(e);
+  }
+
   return (
-    <div
-      className={
-        isHide ? [style.container, style._hide].join(" ") : style.container
-      }
-    >
+    <div className={[style.container, props.className].join(" ")}>
       <input
-        name={name}
-        onInvalid={onInvalidHandler}
+        {...props}
+        disabled={props.disabled || isLoading}
         onBlur={onBlurHandler}
-        defaultValue={defaultValue?.toLocaleDateString() || ""}
-        onKeyDown={onKeyDownHandler}
+        onChange={onChangeHandler}
+        onInvalid={onInvalidHandler}
+        placeholder="placeholder"
         className={
-          invalid ? [style.input, style._invalid].join(" ") : style.input
+          {
+            isNumeric: invalid
+              ? [style.input, style.isNumeric, style._invalid].join(" ")
+              : [style.input, style.isNumeric].join(" "),
+            default: invalid
+              ? [style.input, style._invalid].join(" ")
+              : [style.input].join(" "),
+          }[isNumeric ? "isNumeric" : "default"]
         }
-        placeholder={dateMask.mask}
-        onClick={onClickHandler}
-        ref={inputRef}
-        type="text"
+        ref={ref}
       />
       <label className={style.label}>{label}</label>
       {invalid && (
         <span className={style.validationMessage}>{validationMessage}</span>
       )}
-      <CalendarIcon className={style.icon} onClick={onCalendarClick} />
+      {/*
+       {isLoading && <CircularLoader className={style.loader} />}
+      */}
     </div>
   );
-}
+});

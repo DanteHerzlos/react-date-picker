@@ -1,4 +1,25 @@
 .container {
+  position: relative;
+}
+
+.icon {
+  top: calc(50% - 12px);
+  right: 0.5rem;
+  position: absolute;
+  color: #999999;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.icon:hover {
+  color: #666666
+}
+
+.icon:active {
+  color: #444444
+}
+
+.container {
   width: 100%;
   position: relative;
   --default-border-color: #bfbfbf;
@@ -11,11 +32,16 @@
   --hovered-option-color: #f0f0f0;
 }
 
+.container._hide {
+  display: none;
+}
+
 .input {
   width: 100%;
   height: 3rem;
   outline: none;
   padding: 1rem;
+  padding-right: 2.5rem;
   font-size: 1rem;
   font-weight: 400;
   letter-spacing: 0.00938em;
@@ -25,20 +51,6 @@
   transition: 0.2s;
 }
 
-.isNumeric {
-  outline: none;
-  width: 100%;
-  float: left;
-  border: none;
-  font-size: 1rem;
-  -moz-appearance: textfield;
-}
-
-.isNumeric::-webkit-outer-spin-button,
-.isNumeric::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
 
 .input:hover {
   border-color: var(--hovered-border-color);
@@ -109,3 +121,8 @@
   left: 0.5rem;
 }
 
+
+.icon._disabled {
+  pointer-events: none;
+  color: var(--disabled-color)
+}
