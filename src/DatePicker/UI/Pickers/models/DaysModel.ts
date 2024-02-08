@@ -87,7 +87,8 @@ class DaysModel extends BaseDaysModel<DateAdapter> {
   }
   isSelected(day: number) {
     return (
-      this.currentDate.getFullYear() === this.selectedDate.getValue().getFullYear() &&
+      this.currentDate.getFullYear() ===
+        this.selectedDate.getValue().getFullYear() &&
       this.currentDate.getMonth() === this.selectedDate.getValue().getMonth() &&
       day === this.selectedDate.getValue().getDate()
     );
@@ -172,20 +173,20 @@ export function getDaysModel<SelectedDateType>(
   selectedDate: SelectedDateType,
   disabledDates: [Date, Date][],
 ) {
-  if(selectedDate instanceof DateAdapter) {
-    const model = new DaysModel(currentDate, selectedDate, disabledDates)
-    model.generateDays()
-    return model
+  if (selectedDate instanceof DateAdapter) {
+    const model = new DaysModel(currentDate, selectedDate, disabledDates);
+    model.generateDays();
+    return model;
   }
-  if(selectedDate instanceof RangeDate) {
-    const model = new RangeDaysModel(currentDate, selectedDate, disabledDates)
-    model.generateDays()
-    return model
+  if (selectedDate instanceof RangeDate) {
+    const model = new RangeDaysModel(currentDate, selectedDate, disabledDates);
+    model.generateDays();
+    return model;
   }
-  if(selectedDate instanceof MultiDate) {
-    const model = new MultiDaysModel(currentDate, selectedDate, disabledDates)
-    model.generateDays()
-    return model
+  if (selectedDate instanceof MultiDate) {
+    const model = new MultiDaysModel(currentDate, selectedDate, disabledDates);
+    model.generateDays();
+    return model;
   }
-  throw new Error("Can't generate DaysModel. Wrong type for selectedDate")
+  throw new Error("Can't generate DaysModel. Wrong type for selectedDate");
 }
