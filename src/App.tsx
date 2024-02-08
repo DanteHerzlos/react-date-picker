@@ -1,7 +1,7 @@
 import { DatePicker } from "./DatePicker/DatePicker";
 import "./App.css";
 import { useState } from "react";
-import { RangeDatePicker } from "DatePicker/RangeDatePicker";
+import { RangeDatePicker } from "./DatePicker/RangeDatePicker";
 
 const disabledDates: [Date, Date][] = [
   [new Date(1900, 0, 1), new Date(2000, 0, 1)],

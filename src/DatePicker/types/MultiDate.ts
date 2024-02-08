@@ -1,4 +1,4 @@
-import { DateUtils } from "DatePicker/helpers/DateUtils";
+import { DateUtils } from "../helpers/DateUtils";
 import { PickerType } from "./PickerType";
 
 export class MultiDate {

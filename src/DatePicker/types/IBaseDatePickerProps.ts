@@ -1,4 +1,4 @@
-import { FormatType } from "DatePicker/helpers/DateUtils";
+import { FormatType } from "../helpers/DateUtils";
 import { PickerType } from "./PickerType";
 import { ModeType } from "./ModeType";
 

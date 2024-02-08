@@ -1,4 +1,4 @@
-import { DateUtils } from "DatePicker/helpers/DateUtils";
+import { DateUtils } from "../helpers/DateUtils";
 import { InvalidDate } from "./InvalidDate";
 import { PickerType } from "./PickerType";
 

@@ -1,4 +1,4 @@
-import { DateUtils } from "DatePicker/helpers/DateUtils";
+import { DateUtils } from "../helpers/DateUtils";
 import { PickerType } from "./PickerType";
 import { InvalidDate } from "./InvalidDate";
 
@@ -43,5 +43,9 @@ export class DateAdapter {
 
   toString(){
     return this.value.toString()
+  }
+
+  getNewInstance(instance: DateAdapter){
+    return new DateAdapter(instance.getValue())
   }
 }

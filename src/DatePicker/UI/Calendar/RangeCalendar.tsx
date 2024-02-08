@@ -5,10 +5,10 @@ import { YearPicker } from "../Pickers/YearPicker";
 import { DayPicker } from "../Pickers/DayPicker";
 import { MonthPicker } from "../Pickers/MonthPicker";
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
-import { PickerTypeEnum } from "DatePicker/types/PickerType";
+import { PickerTypeEnum } from "../../types/PickerType";
+import { DateAdapter } from "../../types/DateAdapter";
 
 export function RangeCalendar({ onClose }: { onClose?: () => void }) {
-  const [selectedDateIdx, setSelectedDateIdx] = useState<number>(0)
   const [date, setDate] = DatePickerStore.useStore((s) => s.selectedDate);
   const [disabled] = DatePickerStore.useStore((s) => s.disabled);
   const [readOnly] = DatePickerStore.useStore((s) => s.readOnly);
@@ -18,11 +18,11 @@ export function RangeCalendar({ onClose }: { onClose?: () => void }) {
   );
 
   const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
-  const [currentDate, setCurrentDate] = useState<Date>(date || defaultValue);
+  const [currentDate, setCurrentDate] = useState<Date>(date.getValue() || defaultValue);
 
   useEffect(() => {
-    if (date) setCurrentDate(new Date(date));
-  }, [date]);
+    if (date) setCurrentDate(new Date(date.getValue()));
+  }, [date.toString()]);
 
   function onChangeMonthHandler(diff: number) {
     const newDate = new Date(currentDate);
@@ -35,7 +35,7 @@ export function RangeCalendar({ onClose }: { onClose?: () => void }) {
     newDate.setFullYear(year);
     if (onClose && initPickerType === PickerTypeEnum.YEAR) onClose();
     if (initPickerType === PickerTypeEnum.YEAR) {
-      setDate({ selectedDate: newDate });
+      setDate({ selectedDate: new DateAdapter(newDate) });
     } else {
       setCurrentDate(newDate);
     }
@@ -47,7 +47,7 @@ export function RangeCalendar({ onClose }: { onClose?: () => void }) {
     newDate.setMonth(month);
     if (onClose && initPickerType === PickerTypeEnum.MONTH) onClose();
     if (initPickerType === PickerTypeEnum.MONTH) {
-      setDate({ selectedDate: newDate });
+      setDate({ selectedDate: new DateAdapter(newDate) });
     } else {
       setCurrentDate(newDate);
     }
@@ -57,7 +57,7 @@ export function RangeCalendar({ onClose }: { onClose?: () => void }) {
   function onDayPickHandler(date: Date) {
     if (disabled || readOnly) return;
     onClose && onClose();
-    setDate({ selectedDate: date });
+    setDate({ selectedDate: new DateAdapter(date) });
   }
 
   function onMonthClickHandler() {

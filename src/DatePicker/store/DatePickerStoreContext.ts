@@ -2,10 +2,10 @@ import { DateUtils } from "../helpers/DateUtils";
 import createContextStore from "./createContextStore";
 import { DateInputModel } from "../helpers/InputUtils";
 import { ModeType } from "../types/ModeType";
-import { PickerType} from "DatePicker/types/PickerType";
-import { IDatePickerOptions } from "DatePicker/types/IBaseDatePickerProps";
-import { DateAdapter } from "DatePicker/types/DateAdapter";
-import { RangeDate } from "DatePicker/types/RangeDate";
+import { PickerType} from "../types/PickerType";
+import { IDatePickerOptions } from "../types/IBaseDatePickerProps";
+import { DateAdapter } from "../types/DateAdapter";
+import { RangeDate } from "../types/RangeDate";
 import { createBaseDatePickerStore } from "./createBaseDatePickerStore";
 
 // type DateType = DateAdapter | RangeDate | MultiDate

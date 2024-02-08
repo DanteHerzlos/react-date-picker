@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavigatePanel } from "../NavigatePanel/NavigatePanel";
 import style from "./Calendar.module.css";
 import { YearPicker } from "../Pickers/YearPicker";
 import { DayPicker } from "../Pickers/DayPicker";
 import { MonthPicker } from "../Pickers/MonthPicker";
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
-import { PickerTypeEnum } from "DatePicker/types/PickerType";
+import { PickerTypeEnum } from "../../types/PickerType";
 import { DateAdapter } from "DatePicker/types/DateAdapter";
 
 export function Calendar({ onClose }: { onClose?: () => void }) {
@@ -20,22 +20,20 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
   const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
   const [currentDate, setCurrentDate] = useState<Date>(date.getValue() || defaultValue);
 
-  useEffect(() => {
-    if (date) setCurrentDate(new Date(date.getValue()));
-  }, [date]);
-
   function onChangeMonthHandler(diff: number) {
     const newDate = new Date(currentDate);
     newDate.setMonth(newDate.getMonth() + diff);
     setCurrentDate(newDate);
   }
 
+
   function onYearPickHandler(year: number) {
     const newDate = new Date(currentDate);
     newDate.setFullYear(year);
     if (onClose && initPickerType === PickerTypeEnum.YEAR) onClose();
     if (initPickerType === PickerTypeEnum.YEAR) {
-      setDate({ selectedDate: new DateAdapter(newDate) });
+      date.setValue(newDate)
+      setDate({ selectedDate: date });
     } else {
       setCurrentDate(newDate);
     }
@@ -47,17 +45,19 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
     newDate.setMonth(month);
     if (onClose && initPickerType === PickerTypeEnum.MONTH) onClose();
     if (initPickerType === PickerTypeEnum.MONTH) {
-      setDate({ selectedDate: new DateAdapter(newDate) });
+      date.setValue(newDate)
+      setDate({ selectedDate: date });
     } else {
       setCurrentDate(newDate);
     }
     setPickerType({ pickerType: initPickerType });
   }
 
-  function onDayPickHandler(date: Date) {
+  function onDayPickHandler(value: Date) {
     if (disabled || readOnly) return;
     onClose && onClose();
-    setDate({ selectedDate: new DateAdapter(date) });
+    date.setValue(value)
+    setDate({ selectedDate: new DateAdapter(value) });
   }
 
   function onMonthClickHandler() {

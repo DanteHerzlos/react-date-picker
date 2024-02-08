@@ -1,7 +1,7 @@
-import { DateUtils } from "DatePicker/helpers/DateUtils";
-import { IDatePickerOptions } from "DatePicker/types/IBaseDatePickerProps";
-import { ModeType } from "DatePicker/types/ModeType";
-import { PickerType, PickerTypeEnum } from "DatePicker/types/PickerType";
+import { DateUtils } from "../helpers/DateUtils";
+import { IDatePickerOptions } from "../types/IBaseDatePickerProps";
+import { ModeType } from "../types/ModeType";
+import { PickerType, PickerTypeEnum } from "../types/PickerType";
 
 interface IBaseDatePickerStoreProps {
   options?: IDatePickerOptions;
