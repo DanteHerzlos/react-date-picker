@@ -69,4 +69,8 @@ export class MultiDate {
       this.value.set(key, restrictedValue);
     });
   }
+
+  toString(){
+    return [...this.value.values()].map(d => d.toString()).join("")
+  }
 }

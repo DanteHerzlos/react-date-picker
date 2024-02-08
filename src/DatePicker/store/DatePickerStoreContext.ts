@@ -2,12 +2,10 @@ import { DateUtils } from "../helpers/DateUtils";
 import createContextStore from "./createContextStore";
 import { DateInputModel } from "../helpers/InputUtils";
 import { ModeType } from "../types/ModeType";
-import { PickerType, PickerTypeEnum } from "DatePicker/types/PickerType";
-import { InvalidDate } from "DatePicker/types/InvalidDate";
+import { PickerType} from "DatePicker/types/PickerType";
 import { IDatePickerOptions } from "DatePicker/types/IBaseDatePickerProps";
 import { DateAdapter } from "DatePicker/types/DateAdapter";
 import { RangeDate } from "DatePicker/types/RangeDate";
-import { MultiDate } from "DatePicker/types/MultiDate";
 import { createBaseDatePickerStore } from "./createBaseDatePickerStore";
 
 // type DateType = DateAdapter | RangeDate | MultiDate
@@ -26,62 +24,6 @@ interface IDatePickerStoreProps<DateType> {
   defaultValue?: DateType;
   value?: DateType;
 }
-
-// export function createDatePickerStore({
-//   options = {},
-//   disabledDates = [],
-//   pickerType = PickerTypeEnum.DAY,
-//   defaultValue,
-//   value,
-//   name,
-//   readOnly = false,
-//   disabled = false,
-//   required = false,
-//   label,
-//   customInput,
-// }: IDatePickerStoreProps) {
-//   const {
-//     locale = "default",
-//     monthFormat,
-//     weekFormat,
-//     startYear,
-//     endYear,
-//   } = options;
-//   const initialPickerType = pickerType;
-//   const weekNames = DateUtils.getWeekNames(locale, weekFormat);
-//   const years = DateUtils.getYearsInterval(startYear, endYear);
-//   const dateMask = DateUtils.getDateMask(locale, pickerType);
-//   const dateInputModel = new DateInputModel(dateMask);
-//   let selectedDate = new InvalidDate();
-//   if (value || defaultValue) {
-//     //TODO
-//
-//     selectedDate = DateUtils.getDateWithRestriction(
-//       value || defaultValue!,
-//       pickerType,
-//     );
-//   }
-//
-//   return {
-//     required,
-//     disabled,
-//     readOnly,
-//     name,
-//     locale,
-//     weekNames,
-//     monthFormat,
-//     years,
-//     dateMask,
-//     selectedDate,
-//     pickerType,
-//     initialPickerType,
-//     defaultValue,
-//     dateInputModel,
-//     disabledDates,
-//     label,
-//     CustomInput: customInput,
-//   };
-// }
 
 export function createDatePickerStore(props: IDatePickerStoreProps<Date>) {
   const baseStore = createBaseDatePickerStore(props);

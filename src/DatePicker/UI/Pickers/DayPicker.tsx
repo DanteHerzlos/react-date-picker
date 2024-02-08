@@ -4,7 +4,7 @@ import { RangeDate } from "../../types/RangeDate";
 import { MultiDate } from "../../types/MultiDate";
 import { getPickerStyleMapByType } from "./const/pickerStyleMap";
 import { getDaysModel } from "./models/DaysModel";
-import { DateAdapter } from "DatePicker/types/DateAdapter";
+import { DateAdapter } from "../../types/DateAdapter";
 
 const pickerStyleMap = getPickerStyleMapByType("day");
 

@@ -16,15 +16,7 @@
     "outDir": "./dist/",
     "noImplicitAny": true,
     "sourceMap": true,
-    "baseUrl": "./src/",
-    "paths": {
-      "@styles/*": ["styles/*"],
-      "@store/*": ["store/*"],
-      "@hooks/*": ["hooks/*"],
-      "@services/*": ["services/*"],
-      "@components/*": ["components/*"],
-      "@helpers/*": ["helpers/*"]
-    }
+    "baseUrl": "./src",
   },
   "include": ["src", "**/*.d.ts"],
   "exclude": ["**/node_modules", "**/.*/"]

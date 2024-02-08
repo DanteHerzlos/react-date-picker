@@ -77,4 +77,8 @@ export class RangeDate {
     this.value[0] = DateUtils.getDateWithRestriction(this.value[0], mode);
     this.value[1] = DateUtils.getDateWithRestriction(this.value[1], mode);
   }
+
+  toString(){
+    return this.value.map(d => d.toString()).join("")
+  }
 }

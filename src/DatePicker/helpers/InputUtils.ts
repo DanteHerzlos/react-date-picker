@@ -1,5 +1,5 @@
+import { DateValues } from "../types/DateValues";
 import { DateMask } from "./DateMask";
-import { DateValues } from "./DateValues";
 
 export class DateInputModel {
   element: HTMLInputElement | null = null;
