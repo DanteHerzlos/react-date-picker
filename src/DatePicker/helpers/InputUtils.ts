@@ -87,8 +87,8 @@ export class DateInputModel {
     let end = 0;
     let type;
     for (let i = 0; i < this.dateMask.positions.length; i++) {
-      type = this.dateMask.types[i];
-      const sectionLength = this.dateMask.positions[i].length;
+      type = this.dateMask.positions[i].type;
+      const sectionLength = this.dateMask.positions[i].defaultValue.length;
       if (sectionLength >= position) {
         end = start + sectionLength;
         break;

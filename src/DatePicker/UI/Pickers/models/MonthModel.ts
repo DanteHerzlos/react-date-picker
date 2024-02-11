@@ -2,7 +2,7 @@ import { RangeDate } from "../../../types/RangeDate";
 import { MultiDate } from "../../../types/MultiDate";
 import { DateUtils, FormatType } from "../../../helpers/DateUtils";
 import { PickerStyleTypesEnum } from "../const/pickerStyleMap";
-import { DateAdapter } from "DatePicker/types/DateAdapter";
+import { DateAdapter } from "../../../types/DateAdapter";
 
 type CheckDateFnType = (month: number) => false | PickerStyleTypesEnum;
 type MonthsListType = {
@@ -116,6 +116,8 @@ class RangeMonthModel extends BaseMonthsModel<RangeDate> {
         this.isMiddleRange(month) && PickerStyleTypesEnum.MIDDLE_RANGE,
       (month: number) =>
         this.isEndRange(month) && PickerStyleTypesEnum.END_RANGE,
+      (month: number) =>
+        this.isOneMonthRange(month) && PickerStyleTypesEnum.MIDDLE_RANGE,
     ];
     super(
       currentDate,
@@ -155,6 +157,10 @@ class RangeMonthModel extends BaseMonthsModel<RangeDate> {
       this.currentDate.getFullYear() === endDate.getFullYear() &&
       month === endDate.getMonth()
     );
+  }
+
+  isOneMonthRange(month: number) {
+    return this.isStartRange(month) && this.isEndRange(month);
   }
 }
 

@@ -1,51 +1,45 @@
-import { DateValuesType } from "../types/DateValues"
-import { PickerType, PickerTypeEnum } from "../types/PickerType"
+import { DateValuesType } from "../types/DateValues";
+import { PickerType, PickerTypeEnum } from "../types/PickerType";
 
-type PositionType = "YYYY" | "MM" | "DD" | "NN" 
+type PositionType = "YYYY" | "MM" | "DD";
 
 export class DateMask {
-  types: DateValuesType[]
-  positions: PositionType[]
-  separator: string
-  mask: string
+  positions: {
+    defaultValue: PositionType;
+    type: DateValuesType;
+  }[];
+  separator: string;
+  mask: string;
 
-  private dayIndex: number
-  private monthIndex: number
-  private yearIndex: number
+  private dayIndex: number;
+  private monthIndex: number;
+  private yearIndex: number;
 
-  constructor(
-    locale: string,
-    pickerType: PickerType = 'day',
-  ) {
+  constructor(locale: string, pickerType: PickerType = "day") {
     const date = new Date(1970, 11, 29);
     const localeString = date.toLocaleDateString(locale);
     const separators = localeString.replace(/[0-9]/g, "");
     this.separator = separators.slice(0, separators.length / 2);
     const dateArr = localeString.split(this.separator);
     this.positions = dateArr.map((d) => {
-      if (d === "1970") return "YYYY";
-      if (d === "12") return "MM";
-      if (d === "29") return "DD";
-      return "NN"
-    });
-    this.types = dateArr.map((d) => {
-      if (d === "1970") return "year";
-      if (d === "12") return "month";
-      if (d === "29") return "day";
-      return "day"
+      if (d === "1970") return { defaultValue: "YYYY", type: "year" };
+      if (d === "12") return { defaultValue: "MM", type: "month" };
+      if (d === "29") return { defaultValue: "DD", type: "day" };
+      return { defaultValue: "DD", type: "day" };
     });
     if (pickerType === PickerTypeEnum.YEAR) {
-      this.positions = this.positions.filter((d) => d !== "MM" && d !== "DD");
+      this.positions = this.positions.filter(
+        (d) => d.type !== "month" && d.type !== "day",
+      );
     } else if (pickerType === PickerTypeEnum.MONTH) {
-      this.positions = this.positions.filter((d) => d !== "DD");
+      this.positions = this.positions.filter((d) => d.type !== "day");
     }
-    this.positions = this.positions
-    this.yearIndex = this.positions.findIndex((el) => el === "YYYY");
-    this.monthIndex = this.positions.findIndex((el) => el === "MM");
-    this.dayIndex = this.positions.findIndex((el) => el === "DD");
+    this.positions = this.positions;
+    this.yearIndex = this.positions.findIndex((el) => el.type === "year");
+    this.monthIndex = this.positions.findIndex((el) => el.type === "month");
+    this.dayIndex = this.positions.findIndex((el) => el.type === "day");
     this.mask = this.positions.join(this.separator);
   }
-
 
   getMaskByDates({
     dayValue,

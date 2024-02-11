@@ -1,26 +1,20 @@
 import { useMemo } from "react";
-import {
-  DatePickerStore,
-  createDatePickerStore,
-} from "./store/DatePickerStoreContext";
+import { DatePickerStore } from "./store/DatePickerStoreContext";
 import { IBaseDatePickerProps } from "./types/IBaseDatePickerProps";
-import { RangeDate } from "./types/RangeDate";
-import { RangeDatePickerWithContext } from "./RangeDatePickerWithContext";
+import { DatePickerWithContext } from "./DatePickerWithContext";
+import { createBaseDatePickerStore } from "./store/createBaseDatePickerStore";
 
 export function RangeDatePicker(props: IBaseDatePickerProps<[Date, Date]>) {
-  const mode = props.mode || "input";
-  const store = useMemo(
-    () =>
-      createDatePickerStore({
-        ...props,
-        defaultValue: new RangeDate(props.defaultValue),
-        value: new RangeDate(props.value),
-      }),
-    [props],
-  );
+  const store = useMemo(() => createBaseDatePickerStore(props), [props]);
   return (
     <DatePickerStore.Provider value={store}>
-      <RangeDatePickerWithContext onChange={props.onChange} mode={mode} />
+      <DatePickerWithContext
+        dateType="range"
+        onChange={props.onChange}
+        mode={props.mode || "input"}
+        value={props.value}
+        defaultValue={props.defaultValue}
+      />
     </DatePickerStore.Provider>
   );
 }

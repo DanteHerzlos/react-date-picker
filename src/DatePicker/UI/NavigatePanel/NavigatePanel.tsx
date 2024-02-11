@@ -2,9 +2,9 @@ import { NavigateBeforeIcon } from "../../icons/NavigateBeforeIcon";
 import { NavigateNextIcon } from "../../icons/NavigateNextIcon";
 import style from "./NavigatePanel.module.css";
 import { toTitleCase } from "../../helpers/toTitleCase";
-import { DatePickerStore } from "../../store/DatePickerStoreContext";
 
 export function NavigatePanel({
+  locale,
   isMonthPicker,
   isMonthNavigation,
   date,
@@ -13,6 +13,7 @@ export function NavigatePanel({
   onNextClick,
   onPrevClick,
 }: {
+  locale: string
   isMonthPicker: boolean;
   isMonthNavigation: boolean;
   date: Date;
@@ -21,7 +22,6 @@ export function NavigatePanel({
   onNextClick?: () => void;
   onPrevClick?: () => void;
 }) {
-  const [locale] = DatePickerStore.useStore(s => s.locale);
   const monthName = toTitleCase(
     date.toLocaleString(locale, { month: "long" }),
   );

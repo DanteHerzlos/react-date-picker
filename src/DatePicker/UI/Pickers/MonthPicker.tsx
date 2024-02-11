@@ -1,24 +1,23 @@
 import style from "./Pickers.module.css";
-import { DatePickerStore } from "../../store/DatePickerStoreContext";
-import { MultiDate } from "../../types/MultiDate";
-import { RangeDate } from "../../types/RangeDate";
 import { getPickerStyleMapByType } from "./const/pickerStyleMap";
 import { getMonthModel } from "./models/MonthModel";
-import { DateAdapter } from "../../types/DateAdapter";
+import { DateType } from "../../types/DateType";
 
 const pickerStyleMap = getPickerStyleMapByType("month");
 
 export function MonthPicker({
+  locale,
+  disabledDates,
   currentDate,
   selectedDate,
   onPick,
 }: {
+  locale: string
+  disabledDates: [Date, Date][]
   currentDate: Date;
-  selectedDate: DateAdapter | MultiDate | RangeDate;
+  selectedDate: DateType;
   onPick: (month: number) => void;
 }) {
-  const [locale] = DatePickerStore.useStore((s) => s.locale);
-  const [disabledDates] = DatePickerStore.useStore((s) => s.disabledDates);
   const monthModel = getMonthModel(
     currentDate,
     selectedDate,

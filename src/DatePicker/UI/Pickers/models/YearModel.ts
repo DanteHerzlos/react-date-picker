@@ -1,7 +1,7 @@
 import { RangeDate } from "../../../types/RangeDate";
 import { MultiDate } from "../../../types/MultiDate";
 import { PickerStyleTypesEnum } from "../const/pickerStyleMap";
-import { DateAdapter } from "DatePicker/types/DateAdapter";
+import { DateAdapter } from "../../../types/DateAdapter";
 
 type CheckDateFnType = (month: number) => false | PickerStyleTypesEnum;
 type YearsListType = {
@@ -82,6 +82,8 @@ class RangeYearModel extends BaseYearModel<RangeDate> {
       (year: number) =>
         this.isMiddleRange(year) && PickerStyleTypesEnum.MIDDLE_RANGE,
       (year: number) => this.isEndRange(year) && PickerStyleTypesEnum.END_RANGE,
+      (year: number) =>
+        this.isOneYearRange(year) && PickerStyleTypesEnum.MIDDLE_RANGE,
     ];
     super(selectedDate, disabledDates, extendCheckDateFns);
   }
@@ -104,6 +106,10 @@ class RangeYearModel extends BaseYearModel<RangeDate> {
   isEndRange(year: number) {
     const endDate = this.selectedDate.getEndDate();
     return year === endDate.getFullYear();
+  }
+
+  isOneYearRange(year: number) {
+    return this.isStartRange(year) && this.isEndRange(year);
   }
 }
 

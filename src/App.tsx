@@ -9,6 +9,7 @@ const disabledDates: [Date, Date][] = [
 
 const App = () => {
   const [date, setDate] = useState(new Date());
+  const [rangeDate, setRangeDate] = useState<[Date, Date]>([new Date(), new Date()]);
   console.log(date);
   return (
     <div
@@ -37,7 +38,6 @@ const App = () => {
           value={date}
         />
       </div>
-      {/*
       <h2>Range Date Picker</h2>
       <div style={{ width: "200px" }}>
         <RangeDatePicker
@@ -52,7 +52,6 @@ const App = () => {
           label="my label"
         />
       </div>
-      */}
     </div>
   );
 };

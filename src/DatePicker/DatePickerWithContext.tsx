@@ -1,30 +1,37 @@
-import { CalendarWithHideInput } from "./Layouts/CalendarWithHideInput/CalendarWithHideInput";
-import { CalendarWithInput } from "./Layouts/CalendarWithInput/CalendarWithInput";
-import { DatePickerStore } from "./store/DatePickerStoreContext";
-import { useEffect } from "react";
+import { DateAdapterLayout } from "./Layouts/DateAdapterLayout";
+import { RangeDateLayout } from "./Layouts/RangeDateLayout";
+import { InputDateType } from "./types/DateType";
 import { ModeType } from "./types/ModeType";
 
 export function DatePickerWithContext({
+  dateType,
+  value,
+  defaultValue,
   mode,
   onChange,
 }: {
+  dateType: "range" | "one";
+  value?: InputDateType;
+  defaultValue?: InputDateType;
   mode: ModeType;
-  onChange?: (selected: Date) => void;
+  onChange?: (selected: InputDateType) => void;
 }) {
-  const [selectedDate] = DatePickerStore.useStore((s) => s.selectedDate);
-
-  useEffect(() => {
-    onChange && onChange(selectedDate.getValue());
-  }, [selectedDate.toString()]);
-
-  return (
-    <>
-      {
-        {
-          input: <CalendarWithInput />,
-          calendar: <CalendarWithHideInput />,
-        }[mode]
-      }
-    </>
-  );
+  return {
+    one: (
+      <DateAdapterLayout
+        mode={mode}
+        onChange={onChange}
+        value={value as Date}
+        defaultValue={defaultValue as Date}
+      />
+    ),
+    range: (
+      <RangeDateLayout
+        mode={mode}
+        onChange={onChange}
+        value={value as [Date, Date]}
+        defaultValue={defaultValue as [Date, Date]}
+      />
+    ),
+  }[dateType];
 }

@@ -45,7 +45,7 @@ export class DateAdapter {
     return this.value.toString()
   }
 
-  getNewInstance(instance: DateAdapter){
-    return new DateAdapter(instance.getValue())
+  getCopy(){
+    return new DateAdapter(this.getValue())
   }
 }

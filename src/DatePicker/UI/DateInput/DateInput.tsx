@@ -1,38 +1,45 @@
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import style from "./DateInput.module.css";
 import { CalendarIcon } from "../../icons/CalendarIcon";
 import { DateValues } from "../../types/DateValues";
 import { Input } from "../Input/Input";
-import { DateAdapter } from "DatePicker/types/DateAdapter";
+import { DateAdapter } from "../../types/DateAdapter";
+import { DateUtils } from "../../helpers/DateUtils";
+import { DateInputModel } from "../../helpers/InputUtils";
+import { DateType } from "../../types/DateType";
 
 const numericKeys = new Set(new Array(10).fill(0).map((_, i) => i.toString()));
 const dateValues = new DateValues();
 
-export function DateInput({
+export function DateInput<T extends DateType>({
+  defaultValue,
+  selectedDate,
+  setSelectedDate,
   onCalendarClick,
   isHide = false,
 }: {
+  defaultValue?: Date;
+  selectedDate: T;
+  setSelectedDate: (value: T) => void;
   onCalendarClick?: () => void;
   isHide?: boolean;
 }) {
+  const {
+    disabledDates,
+    CustomInput,
+    readOnly,
+    label,
+    name,
+    required,
+    disabled,
+    pickerType,
+    locale,
+  } = useContext(DatePickerStore);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [dateInputModel] = DatePickerStore.useStore((s) => s.dateInputModel);
+  const dateMask = DateUtils.getDateMask(locale, pickerType);
+  const dateInputModel = new DateInputModel(dateMask);
   dateInputModel.setElement(inputRef.current);
-  const [dateMask] = DatePickerStore.useStore((s) => s.dateMask);
-  const [disabledDates] = DatePickerStore.useStore((s) => s.disabledDates);
-  const [readOnly] = DatePickerStore.useStore((s) => s.readOnly);
-  const [label] = DatePickerStore.useStore((s) => s.label);
-  const [required] = DatePickerStore.useStore((s) => s.required);
-  const [disabled] = DatePickerStore.useStore((s) => s.disabled);
-  const [name] = DatePickerStore.useStore((s) => s.name);
-  const [CustomInput] = DatePickerStore.useStore((s) => s.CustomInput);
-  const [pickerType] = DatePickerStore.useStore((s) => s.pickerType);
-
-  const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
-  const [selectedDate, setSelectedDate] = DatePickerStore.useStore(
-    (s) => s.selectedDate,
-  );
 
   useEffect(() => {
     dateValues.resetValuesByType(pickerType);
@@ -90,11 +97,11 @@ export function DateInput({
 
   function onBlurHandler() {
     if (disabled) return;
-    setSelectedDate({
-      selectedDate: dateValues.isAllSet()
-        ? new DateAdapter(dateValues.getDate())
-        : new DateAdapter(),
-    });
+    setSelectedDate(
+      dateValues.isAllSet()
+        ? (new DateAdapter(dateValues.getDate()) as T)
+        : (new DateAdapter() as T),
+    );
   }
   return (
     <div

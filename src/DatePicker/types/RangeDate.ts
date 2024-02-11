@@ -7,7 +7,7 @@ export class RangeDate {
   constructor(range?: [Date, Date]) {
     if (range && range[0]) {
       this.setStartDate(range[0]);
-    } 
+    }
     if (range && range[1]) {
       this.setEndDate(range[1]);
     }
@@ -35,9 +35,9 @@ export class RangeDate {
   }
 
   setDate(date: Date) {
-    if (this.value[0] instanceof InvalidDate) {
+    if (isNaN(this.value[0].getTime())) {
       this.setStartDate(date);
-    } else if (this.value[1] instanceof InvalidDate) {
+    } else if (isNaN(this.value[1].getTime())) {
       this.setEndDate(date);
     } else {
       this.setStartDate(date);
@@ -52,7 +52,7 @@ export class RangeDate {
     return true;
   }
 
-  getValue() {
+  getValue(): [Date, Date] {
     return [this.value[0], this.value[1]];
   }
 
@@ -78,7 +78,11 @@ export class RangeDate {
     this.value[1] = DateUtils.getDateWithRestriction(this.value[1], mode);
   }
 
-  toString(){
-    return this.value.map(d => d.toString()).join("")
+  toString() {
+    return this.value.map((d) => d.toString()).join("");
+  }
+
+  getCopy() {
+    return new RangeDate(this.getValue());
   }
 }

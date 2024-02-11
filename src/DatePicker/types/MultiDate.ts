@@ -3,8 +3,8 @@ import { PickerType } from "./PickerType";
 
 export class MultiDate {
   value: Map<string, Date>;
-  constructor(dates: Date[]) {
-    this.value = this.getMapFromArray(dates);
+  constructor(date?: Date[]) {
+    this.value = this.getMapFromArray(date || []);
   }
 
   addDate(date: Date) {
@@ -72,5 +72,9 @@ export class MultiDate {
 
   toString(){
     return [...this.value.values()].map(d => d.toString()).join("")
+  }
+
+  getCopy() {
+    return new MultiDate(this.getValue())
   }
 }

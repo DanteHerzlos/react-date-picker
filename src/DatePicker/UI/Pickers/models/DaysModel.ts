@@ -2,7 +2,7 @@ import { DateUtils } from "../../../helpers/DateUtils";
 import { PickerStyleTypesEnum } from "../const/pickerStyleMap";
 import { RangeDate } from "../../../types/RangeDate";
 import { MultiDate } from "../../../types/MultiDate";
-import { DateAdapter } from "DatePicker/types/DateAdapter";
+import { DateAdapter } from "../../../types/DateAdapter";
 
 type CheckDateFnType = (day: number) => false | PickerStyleTypesEnum;
 
@@ -107,6 +107,8 @@ class RangeDaysModel extends BaseDaysModel<RangeDate> {
       (day: number) =>
         this.isMiddleRange(day) && PickerStyleTypesEnum.MIDDLE_RANGE,
       (day: number) => this.isEndRange(day) && PickerStyleTypesEnum.END_RANGE,
+      (day: number) =>
+        this.isOneDayRange(day) && PickerStyleTypesEnum.MIDDLE_RANGE,
     ];
     super(currentDate, selectedDate, disabledDates, extendCheckDateFns);
   }
@@ -140,6 +142,10 @@ class RangeDaysModel extends BaseDaysModel<RangeDate> {
       this.currentDate.getMonth() === endDate.getMonth() &&
       day === endDate.getDate()
     );
+  }
+
+  isOneDayRange(day: number) {
+    return this.isStartRange(day) && this.isEndRange(day);
   }
 }
 

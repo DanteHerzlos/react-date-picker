@@ -1,24 +1,33 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { NavigatePanel } from "../NavigatePanel/NavigatePanel";
 import style from "./Calendar.module.css";
-import { YearPicker } from "../Pickers/YearPicker";
-import { DayPicker } from "../Pickers/DayPicker";
-import { MonthPicker } from "../Pickers/MonthPicker";
 import { DatePickerStore } from "../../store/DatePickerStoreContext";
-import { PickerTypeEnum } from "../../types/PickerType";
-import { DateAdapter } from "DatePicker/types/DateAdapter";
+import { PickerType, PickerTypeEnum } from "../../types/PickerType";
+import { PickerLayout } from "../Pickers/PickerLayout";
+import { DateType } from "../../types/DateType";
 
-export function Calendar({ onClose }: { onClose?: () => void }) {
-  const [date, setDate] = DatePickerStore.useStore((s) => s.selectedDate);
-  const [disabled] = DatePickerStore.useStore((s) => s.disabled);
-  const [readOnly] = DatePickerStore.useStore((s) => s.readOnly);
-  const [initPickerType] = DatePickerStore.useStore((s) => s.initialPickerType);
-  const [pickerType, setPickerType] = DatePickerStore.useStore(
-    (s) => s.pickerType,
+export function Calendar<T extends DateType>({
+  initCurrentDate,
+  date,
+  setDate,
+  onClose,
+}: {
+  initCurrentDate?: Date;
+  date: T;
+  setDate: (value: T) => void;
+  onClose?: () => void;
+}) {
+  const {
+    locale,
+    disabledDates,
+    disabled,
+    readOnly,
+    pickerType: initPickerType,
+  } = useContext(DatePickerStore);
+  const [pickerType, setPickerType] = useState<PickerType>(initPickerType);
+  const [currentDate, setCurrentDate] = useState<Date>(
+    initCurrentDate || new Date(),
   );
-
-  const [defaultValue] = DatePickerStore.useStore((s) => s.defaultValue);
-  const [currentDate, setCurrentDate] = useState<Date>(date.getValue() || defaultValue);
 
   function onChangeMonthHandler(diff: number) {
     const newDate = new Date(currentDate);
@@ -26,18 +35,17 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
     setCurrentDate(newDate);
   }
 
-
   function onYearPickHandler(year: number) {
     const newDate = new Date(currentDate);
     newDate.setFullYear(year);
     if (onClose && initPickerType === PickerTypeEnum.YEAR) onClose();
     if (initPickerType === PickerTypeEnum.YEAR) {
-      date.setValue(newDate)
-      setDate({ selectedDate: date });
+      date.setDate(newDate);
+      setDate(date.getCopy() as T);
     } else {
       setCurrentDate(newDate);
     }
-    setPickerType({ pickerType: initPickerType });
+    setPickerType(initPickerType);
   }
 
   function onMonthPickHandler(month: number) {
@@ -45,34 +53,34 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
     newDate.setMonth(month);
     if (onClose && initPickerType === PickerTypeEnum.MONTH) onClose();
     if (initPickerType === PickerTypeEnum.MONTH) {
-      date.setValue(newDate)
-      setDate({ selectedDate: date });
+      date.setDate(newDate);
+      setDate(date.getCopy() as T);
     } else {
       setCurrentDate(newDate);
     }
-    setPickerType({ pickerType: initPickerType });
+    setPickerType(initPickerType);
   }
 
   function onDayPickHandler(value: Date) {
     if (disabled || readOnly) return;
-    onClose && onClose();
-    date.setValue(value)
-    setDate({ selectedDate: new DateAdapter(value) });
+    if (onClose && date.isValid()) {
+      onClose();
+    }
+    date.setDate(value);
+    setDate(date.getCopy() as T);
   }
 
   function onMonthClickHandler() {
-    setPickerType({
-      pickerType:
-        pickerType === initPickerType ? PickerTypeEnum.MONTH : initPickerType,
-    });
+    setPickerType(
+      pickerType === initPickerType ? PickerTypeEnum.MONTH : initPickerType,
+    );
     if (disabled || readOnly) return;
   }
 
   function onYearClickHandler() {
-    setPickerType({
-      pickerType:
-        pickerType === initPickerType ? PickerTypeEnum.YEAR : initPickerType,
-    });
+    setPickerType(
+      pickerType === initPickerType ? PickerTypeEnum.YEAR : initPickerType,
+    );
     if (disabled || readOnly) return;
   }
 
@@ -85,6 +93,7 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
       }
     >
       <NavigatePanel
+        locale={locale}
         isMonthPicker={pickerType !== PickerTypeEnum.YEAR}
         isMonthNavigation={pickerType === PickerTypeEnum.DAY}
         date={currentDate.getTime() ? currentDate : new Date()}
@@ -93,25 +102,16 @@ export function Calendar({ onClose }: { onClose?: () => void }) {
         onMonthClick={onMonthClickHandler}
         onYearClick={onYearClickHandler}
       />
-      {
-        {
-          year: <YearPicker onPick={onYearPickHandler} selectedDate={date} />,
-          month: (
-            <MonthPicker
-              currentDate={currentDate.getTime() ? currentDate : new Date()}
-              selectedDate={date}
-              onPick={onMonthPickHandler}
-            />
-          ),
-          day: (
-            <DayPicker
-              currentDate={currentDate.getTime() ? currentDate : new Date()}
-              selectedDate={date}
-              onPick={onDayPickHandler}
-            />
-          ),
-        }[pickerType]
-      }
+      <PickerLayout
+        pickerType={pickerType}
+        locale={locale}
+        disabledDates={disabledDates}
+        currentDate={currentDate}
+        selectedDate={date}
+        onYearPick={onYearPickHandler}
+        onMonthPick={onMonthPickHandler}
+        onDayPick={onDayPickHandler}
+      />
     </div>
   );
 }
