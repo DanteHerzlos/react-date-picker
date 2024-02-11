@@ -4,8 +4,10 @@ import { DateMask } from "./DateMask";
 export class DateInputModel {
   element: HTMLInputElement | null = null;
   private dateMask: DateMask;
+  // dateValues: DateValues
   constructor(dateMask: DateMask) {
     this.dateMask = dateMask;
+
   }
 
   setElement(element: HTMLInputElement | null) {
